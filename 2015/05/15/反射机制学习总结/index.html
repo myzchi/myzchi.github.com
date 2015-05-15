@@ -4,34 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>mysql卸载重新安装后start service报错的问题 | ZhangChi&#39;s Blog</title>
+    <title>反射机制学习总结 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="安装MySQL时无法启动服务，在安装mysql时，到最后一步执行时，在start service，出现如下错误：
-1Could not start the service
-在网上找了很多方法，包括要把所有相关的文件夹、服务、注册表等都要卸载干净等等，但是都无效。
-后来在一个不太显眼的地方找到一个方法，解决办法如下：
-使用services.msc打开服务窗口，查看MySQL service是否已经存">
+    <meta name="description">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mysql卸载重新安装后start service报错的问题">
-<meta property="og:url" content="http://yoursite.com/2015/02/02/service报错的问题/index.html">
+<meta property="og:title" content="反射机制学习总结">
+<meta property="og:url" content="http://yoursite.com/2015/05/15/反射机制学习总结/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="安装MySQL时无法启动服务，在安装mysql时，到最后一步执行时，在start service，出现如下错误：
-1Could not start the service
-在网上找了很多方法，包括要把所有相关的文件夹、服务、注册表等都要卸载干净等等，但是都无效。
-后来在一个不太显眼的地方找到一个方法，解决办法如下：
-使用services.msc打开服务窗口，查看MySQL service是否已经存">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mysql卸载重新安装后start service报错的问题">
-<meta name="twitter:description" content="安装MySQL时无法启动服务，在安装mysql时，到最后一步执行时，在start service，出现如下错误：
-1Could not start the service
-在网上找了很多方法，包括要把所有相关的文件夹、服务、注册表等都要卸载干净等等，但是都无效。
-后来在一个不太显眼的地方找到一个方法，解决办法如下：
-使用services.msc打开服务窗口，查看MySQL service是否已经存">
+<meta name="twitter:title" content="反射机制学习总结">
+<meta name="twitter:description">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -92,27 +80,27 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/02/02/service报错的问题/" title="mysql卸载重新安装后start service报错的问题" itemprop="url">mysql卸载重新安装后start service报错的问题</a>
+      <a href="/2015/05/15/反射机制学习总结/" title="反射机制学习总结" itemprop="url">反射机制学习总结</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2015-02-02T09:45:28.000Z" itemprop="datePublished"> 发表于 2015-02-02</time>
+    <time datetime="2015-05-15T09:55:57.000Z" itemprop="datePublished"> 发表于 2015-05-15</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>安装MySQL时无法启动服务，在安装mysql时，到最后一步执行时，在start service，出现如下错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not start the service</span><br></pre></td></tr></table></figure>
-<p>在网上找了很多方法，包括要把所有相关的文件夹、服务、注册表等都要卸载干净等等，但是都无效。</p>
-<p>后来在一个不太显眼的地方找到一个方法，解决办法如下：</p>
-<p>使用services.msc打开服务窗口，查看MySQL service是否已经存在。如已经存在并已启动，则先停止该服务，然后到注册表</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">"HKEY_LOCAL_MACHINE/SYSTEM /CurrentControlSet/Services"</span>)</span><br></pre></td></tr></table></figure>
-<p>中删除对应服务，并使用命令sc delete MySQL,然后继续进行安装，就OK了。</p>
-  
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -125,7 +113,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/MySQL/">MySQL</a>
+  <span></span> <a href="/tags/反射/">反射</a>
   </div>
 
 </div>
@@ -134,7 +122,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/02/02/service报错的问题/" data-title="mysql卸载重新安装后start service报错的问题 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/05/15/反射机制学习总结/" data-title="反射机制学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -147,25 +135,32 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Eclipse中启动tomcat和直接启动tomcat的区别</span>
+
+<div class="next">
+<a href="/2015/05/02/hexo-github搭建过程总结/"  title="hexo+github搭建过程总结">
+ <strong>下一篇：</strong><br/> 
+ <span>hexo+github搭建过程总结
+</span>
 </a>
 </div>
-
 
 </nav>
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/02/02/service报错的问题/" data-title="mysql卸载重新安装后start service报错的问题" data-url="http://yoursite.com/2015/02/02/service报错的问题/"></div>
+	<div class="ds-thread" data-thread-key="2015/05/15/反射机制学习总结/" data-title="反射机制学习总结" data-url="http://yoursite.com/2015/05/15/反射机制学习总结/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -349,6 +344,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
