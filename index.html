@@ -82,6 +82,79 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
+<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
+<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
+<h1 id="Redis安装">Redis安装</h1><hr>
+<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
+<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
+<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
+<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
+<p>说明已经成功了</p>
+<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
+<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/05/24/redis学习总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/24/redis学习总结/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/02/hexo-github搭建过程总结/" title="hexo+github搭建过程总结" itemprop="url">hexo+github搭建过程总结</a>
   </h1>
   <p class="article-author">By
@@ -353,69 +426,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-09T04:40:55.000Z" itemprop="datePublished"> 发表于 2015-03-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -434,7 +444,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>4</sup></a></li>
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>5</sup></a></li>
 		  
 		
 		  
@@ -460,6 +470,10 @@
 		
 			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			

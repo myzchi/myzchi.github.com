@@ -4,28 +4,28 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>反射机制学习总结 | ZhangChi&#39;s Blog</title>
+    <title>Redis学习总结 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性
-2.如何得到Class对象2.1 Person.class2.2 person.getclass2.3 Class.forName(“com.person”)
-3.关于Method3.1如何获取method1)">
+    <meta name="description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
+Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
+Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
 <meta property="og:type" content="article">
-<meta property="og:title" content="反射机制学习总结">
-<meta property="og:url" content="http://yoursite.com/2015/04/01/反射机制学习总结/index.html">
+<meta property="og:title" content="Redis学习总结">
+<meta property="og:url" content="http://yoursite.com/2015/05/24/redis学习总结/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性
-2.如何得到Class对象2.1 Person.class2.2 person.getclass2.3 Class.forName(“com.person”)
-3.关于Method3.1如何获取method1)">
+<meta property="og:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
+Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
+Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="反射机制学习总结">
-<meta name="twitter:description" content="反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性
-2.如何得到Class对象2.1 Person.class2.2 person.getclass2.3 Class.forName(“com.person”)
-3.关于Method3.1如何获取method1)">
+<meta name="twitter:title" content="Redis学习总结">
+<meta name="twitter:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
+Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
+Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -86,23 +86,37 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/04/01/反射机制学习总结/" title="反射机制学习总结" itemprop="url">反射机制学习总结</a>
+      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2015-04-01T09:55:57.000Z" itemprop="datePublished"> 发表于 2015-04-01</time>
+    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性<br>1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性</p>
-<p>2.如何得到Class对象<br>2.1 Person.class<br>2.2 person.getclass<br>2.3 Class.forName(“com.person”)</p>
-<p>3.关于Method<br>3.1如何获取method<br>1)getDeclareMethods：得到Method的数组<br>2)getDeclareMethod(String methodName，Class…parameterTypes)<br>3.2 如果调用method<br>1)如果方法是private，先调用method的setAccssible(true)，使其变为可访问<br>2)method.invoke(obj…)</p>
-<p>4.关于Field<br>4.1如何获取Field：getField(String fieldName)<br>4.2如何获取Field的值<br>1)setAccssible(true)<br>2)field.set(obj…)<br>4.3如何设置Field的值<br>field.set(obj)</p>
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
+<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
+<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
+<h1 id="Redis安装">Redis安装</h1><hr>
+<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
+<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
+<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
+<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
+<p>说明已经成功了</p>
+<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
+<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -116,7 +130,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/反射/">反射</a>
+  <span></span> <a href="/tags/Redis/">Redis</a>
   </div>
 
 </div>
@@ -125,7 +139,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/04/01/反射机制学习总结/" data-title="反射机制学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/05/24/redis学习总结/" data-title="Redis学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -138,19 +152,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/04/06/普陀山东极岛之旅/" title="普陀山+东极岛之旅">
-  <strong>上一篇：</strong><br/>
-  <span>
-  普陀山+东极岛之旅</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/03/28/太子湾公园/"  title="太子湾公园">
+<a href="/2015/05/02/hexo-github搭建过程总结/"  title="hexo+github搭建过程总结">
  <strong>下一篇：</strong><br/> 
- <span>太子湾公园
+ <span>hexo+github搭建过程总结
 </span>
 </a>
 </div>
@@ -159,12 +165,19 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/04/01/反射机制学习总结/" data-title="反射机制学习总结" data-url="http://yoursite.com/2015/04/01/反射机制学习总结/"></div>
+	<div class="ds-thread" data-thread-key="2015/05/24/redis学习总结/" data-title="Redis学习总结" data-url="http://yoursite.com/2015/05/24/redis学习总结/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li></ol>
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -352,6 +365,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });

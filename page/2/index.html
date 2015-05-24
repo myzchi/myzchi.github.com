@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-09T04:40:55.000Z" itemprop="datePublished"> 发表于 2015-03-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/02/02/service报错的问题/" title="mysql卸载重新安装后start service报错的问题" itemprop="url">mysql卸载重新安装后start service报错的问题</a>
   </h1>
   <p class="article-author">By
@@ -163,7 +226,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>4</sup></a></li>
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>5</sup></a></li>
 		  
 		
 		  
@@ -189,6 +252,10 @@
 		
 			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
