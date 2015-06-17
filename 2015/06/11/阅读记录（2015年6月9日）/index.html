@@ -4,26 +4,31 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog</title>
+    <title>阅读记录（2015年6月9日） | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+    <meta name="description" content="最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记
+架构及发展大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”
+应用和数据分离应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色
+使用缓">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta property="og:url" content="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/index.html">
+<meta property="og:title" content="阅读记录（2015年6月9日）">
+<meta property="og:url" content="http://yoursite.com/2015/06/11/阅读记录（2015年6月9日）/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png">
+<meta property="og:description" content="最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记
+架构及发展大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”
+应用和数据分离应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色
+使用缓">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta name="twitter:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+<meta name="twitter:title" content="阅读记录（2015年6月9日）">
+<meta name="twitter:description" content="最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记
+架构及发展大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”
+应用和数据分离应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色
+使用缓">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -84,34 +89,41 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
+      <a href="/2015/06/11/阅读记录（2015年6月9日）/" title="阅读记录（2015年6月9日）" itemprop="url">阅读记录（2015年6月9日）</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-09T04:40:55.000Z" itemprop="datePublished"> 发表于 2015-03-09</time>
+    <time datetime="2015-06-11T11:59:04.000Z" itemprop="datePublished"> 发表于 2015-06-11</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
+		<p>最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记</p>
+<h2 id="架构及发展">架构及发展</h2><p>大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”</p>
+<h3 id="应用和数据分离">应用和数据分离</h3><p>应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色</p>
+<h3 id="使用缓存">使用缓存</h3><p>根据80%的数据访问在20%的数据上，将这小部分数据缓存在内存中，减少数据库的压力；例本地缓存分类：有页面缓存、前端页面静态化、前端页面的片段化缓存、以及数据缓存，</p>
+<h3 id="服务器集群">服务器集群</h3><p>使用集群是解决高并发、处理海量数据的常用手段。当一台的服务器处理能力存储空间不足时，不要企图换更大的服务器，更恰当的做法是增加服务器分担原有服务器的压力</p>
+<h3 id="数据库读写分离">数据库读写分离</h3><p>根据数据库提供的主从热备功能，写数据的时候，访问主数据库，主数据库通过主从复制机制将数据更新到从数据库，这样从数据库读数据库的时候，可以通过从数据库读取数据</p>
+<h3 id="反向代理和CDN">反向代理和CDN</h3><p>CDN部署在网络提供商的机房，当用户访问网站服务时，可以从最近的网络提供商机房获取数据；反向代理部署在网站的中心机房，首先访问反向代理服务器缓存的资源</p>
+<h3 id="分布式(文件系统和数据库)">分布式(文件系统和数据库)</h3><p>分布式数据库是网站数据库拆分的最后手段，在单表数据规模非常庞大时使用</p>
+<h3 id="使用NOSQL">使用NOSQL</h3><p>非关系型数据库对于分布式需求和海量数据有着先天的处理优势，同时可以减少应用访问数据的麻烦；当前公司业务就使用了redis这种非关系型数据库作为流量经营中政企的数据访问</p>
+<h3 id="业务拆分">业务拆分</h3><p>大型网站会将首页、商铺、订单、买家、卖家分成不同的产品线；包括我当前公司中准备启动的中心模块化都是在向这方向发展</p>
+<h3 id="两本书的思维导图">两本书的思维导图</h3><p>来自网络：大CC<br><img src="" alt="tool-editor"></p>
+<p><img src="" alt="tool-editor"></p>
+<p>豆瓣上有大牛说其中有些内容是入门级，评分都是7分多，不过对我这种网站架构经验不足的人来说，确实已经达到了拓展视野的目的</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
+  <span></span> <a href="/tags/读书笔记/">读书笔记</a>
   </div>
 
 </div>
@@ -120,7 +132,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/06/11/阅读记录（2015年6月9日）/" data-title="阅读记录（2015年6月9日） | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -133,19 +145,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/28/太子湾公园/" title="太子湾公园">
-  <strong>上一篇：</strong><br/>
-  <span>
-  太子湾公园</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/02/02/service报错的问题/"  title="mysql卸载重新安装后start service报错的问题">
+<a href="/2015/05/24/redis学习总结/"  title="Redis学习总结">
  <strong>下一篇：</strong><br/> 
- <span>mysql卸载重新安装后start service报错的问题
+ <span>Redis学习总结
 </span>
 </a>
 </div>
@@ -154,7 +158,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别" data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/"></div>
+	<div class="ds-thread" data-thread-key="2015/06/11/阅读记录（2015年6月9日）/" data-title="阅读记录（2015年6月9日）" data-url="http://yoursite.com/2015/06/11/阅读记录（2015年6月9日）/"></div>
 </section>
 
 

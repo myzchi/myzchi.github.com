@@ -82,6 +82,76 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/11/阅读记录（2015年6月9日）/" title="阅读记录（2015年6月9日）" itemprop="url">阅读记录（2015年6月9日）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-11T11:59:04.000Z" itemprop="datePublished"> 发表于 2015-06-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记</p>
+<h2 id="架构及发展">架构及发展</h2><p>大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”</p>
+<h3 id="应用和数据分离">应用和数据分离</h3><p>应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色</p>
+<h3 id="使用缓存">使用缓存</h3><p>根据80%的数据访问在20%的数据上，将这小部分数据缓存在内存中，减少数据库的压力；例本地缓存分类：有页面缓存、前端页面静态化、前端页面的片段化缓存、以及数据缓存，</p>
+<h3 id="服务器集群">服务器集群</h3><p>使用集群是解决高并发、处理海量数据的常用手段。当一台的服务器处理能力存储空间不足时，不要企图换更大的服务器，更恰当的做法是增加服务器分担原有服务器的压力</p>
+<h3 id="数据库读写分离">数据库读写分离</h3><p>根据数据库提供的主从热备功能，写数据的时候，访问主数据库，主数据库通过主从复制机制将数据更新到从数据库，这样从数据库读数据库的时候，可以通过从数据库读取数据</p>
+<h3 id="反向代理和CDN">反向代理和CDN</h3><p>CDN部署在网络提供商的机房，当用户访问网站服务时，可以从最近的网络提供商机房获取数据；反向代理部署在网站的中心机房，首先访问反向代理服务器缓存的资源</p>
+<h3 id="分布式(文件系统和数据库)">分布式(文件系统和数据库)</h3><p>分布式数据库是网站数据库拆分的最后手段，在单表数据规模非常庞大时使用</p>
+<h3 id="使用NOSQL">使用NOSQL</h3><p>非关系型数据库对于分布式需求和海量数据有着先天的处理优势，同时可以减少应用访问数据的麻烦；当前公司业务就使用了redis这种非关系型数据库作为流量经营中政企的数据访问</p>
+<h3 id="业务拆分">业务拆分</h3><p>大型网站会将首页、商铺、订单、买家、卖家分成不同的产品线；包括我当前公司中准备启动的中心模块化都是在向这方向发展</p>
+<h3 id="两本书的思维导图">两本书的思维导图</h3><p>来自网络：大CC<br><img src="" alt="tool-editor"></p>
+<p><img src="" alt="tool-editor"></p>
+<p>豆瓣上有大牛说其中有些内容是入门级，评分都是7分多，不过对我这种网站架构经验不足的人来说，确实已经达到了拓展视野的目的</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/读书笔记/">读书笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/06/11/阅读记录（2015年6月9日）/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/11/阅读记录（2015年6月9日）/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
   </h1>
   <p class="article-author">By
@@ -106,7 +176,7 @@
 <p>说明已经成功了</p>
 <p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
 <p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
-
+<h1 id="Redis参数配置">Redis参数配置</h1>
         
         
         <p class="article-more-link">
@@ -346,72 +416,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/01/反射机制学习总结/" title="反射机制学习总结" itemprop="url">反射机制学习总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T09:55:57.000Z" itemprop="datePublished"> 发表于 2015-04-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性<br>1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性</p>
-<p>2.如何得到Class对象<br>2.1 Person.class<br>2.2 person.getclass<br>2.3 Class.forName(“com.person”)</p>
-<p>3.关于Method<br>3.1如何获取method<br>1)getDeclareMethods：得到Method的数组<br>2)getDeclareMethod(String methodName，Class…parameterTypes)<br>3.2 如果调用method<br>1)如果方法是private，先调用method的setAccssible(true)，使其变为可访问<br>2)method.invoke(obj…)</p>
-<p>4.关于Field<br>4.1如何获取Field：getField(String fieldName)<br>4.2如何获取Field的值<br>1)setAccssible(true)<br>2)field.set(obj…)<br>4.3如何设置Field的值<br>field.set(obj)</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/反射/">反射</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/04/01/反射机制学习总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/04/01/反射机制学习总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -451,6 +455,10 @@
 			
 		
 			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
 			
 		
@@ -463,7 +471,7 @@
 			
 		
 			
-				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+				<li><a href="/tags/读书笔记/" title="读书笔记">读书笔记<sup>1</sup></a></li>
 			
 		
 			
@@ -503,6 +511,12 @@
           <li>
             
             	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zybuluo.com/mdeditor" target="_blank" title="Cmd Markdown 编辑阅读器">Cmd Markdown 编辑阅读器</a>
             
           </li>
         
