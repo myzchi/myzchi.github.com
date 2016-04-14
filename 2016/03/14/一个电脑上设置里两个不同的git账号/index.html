@@ -4,26 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog</title>
+    <title>一个电脑上设置里两个不同的git账号 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+    <meta name="description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
+首先需要生成SSH key">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta property="og:url" content="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/index.html">
+<meta property="og:title" content="一个电脑上设置里两个不同的git账号">
+<meta property="og:url" content="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png">
+<meta property="og:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
+首先需要生成SSH key">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta name="twitter:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+<meta name="twitter:title" content="一个电脑上设置里两个不同的git账号">
+<meta name="twitter:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
+首先需要生成SSH key">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -84,35 +83,33 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
+      <a href="/2016/03/14/一个电脑上设置里两个不同的git账号/" title="一个电脑上设置里两个不同的git账号" itemprop="url">一个电脑上设置里两个不同的git账号</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-09T04:40:55.000Z" itemprop="datePublished"> 发表于 2015-03-09</time>
+    <time datetime="2016-03-14T11:55:00.000Z" itemprop="datePublished"> 发表于 2016-03-14</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>   最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫</p>
+<p>首先需要生成SSH key</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
-  </div>
 
 </div>
 
@@ -120,7 +117,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/" data-title="一个电脑上设置里两个不同的git账号 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -133,19 +130,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/28/太子湾公园/" title="太子湾公园">
-  <strong>上一篇：</strong><br/>
-  <span>
-  太子湾公园</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/02/02/service报错的问题/"  title="mysql卸载重新安装后start service报错的问题">
+<a href="/2015/06/09/阅读记录（2015年6月9日）/"  title="阅读记录-2015年6月9日">
  <strong>下一篇：</strong><br/> 
- <span>mysql卸载重新安装后start service报错的问题
+ <span>阅读记录-2015年6月9日
 </span>
 </a>
 </div>
@@ -154,12 +143,19 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别" data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/"></div>
+	<div class="ds-thread" data-thread-key="2016/03/14/一个电脑上设置里两个不同的git账号/" data-title="一个电脑上设置里两个不同的git账号" data-url="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -365,6 +361,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
