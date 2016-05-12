@@ -12,17 +12,20 @@
 
     
     <meta name="description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key">
+首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
+注意不">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个电脑上设置里两个不同的git账号">
 <meta property="og:url" content="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
 <meta property="og:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key">
+首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
+注意不">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个电脑上设置里两个不同的git账号">
 <meta name="twitter:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key">
+首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
+注意不">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -104,7 +107,13 @@
 		</div>
 		
 		<p>   最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫</p>
-<p>首先需要生成SSH key</p>
+<p>首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"your-email-address"</span></span><br></pre></td></tr></table></figure></p>
+<p>注意不要覆盖之前的id_rsa，使用一个新的名字，比如id_rsa_work</p>
+<p>把id_rsa_work.pub加到你的work账号上，即把该key加到ssh agent上。由于不是使用默认的.ssh/id_rsa，所以你需要显示告诉ssh agent你的新key的位置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/id_rsa_work</span><br></pre></td></tr></table></figure></p>
+<p>但是这个步骤有个问题，总是执行不成功，提示错误如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not open a connection to your authentication agent</span><br></pre></td></tr></table></figure></p>
+<p>根据网上提示，出现这样的错误，说明ssh-agent没有启动起来，需要手动启动ssh-agent<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> $(ssh-agent)</span><br></pre></td></tr></table></figure></p>
+<p>这个方法确实可以解决问题，但我发现其实只是启动了一个临时的线程服务，电脑重启后就失效了<br>所以需要将这个服务一直保持启动状态，需要在git启动的配置文件里面加入启动脚本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">SSH_ENV=<span class="string">"<span class="variable">$HOME</span>/.ssh/environment"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> start_agent &#123;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">"Initialising new SSH agent..."</span></span><br><span class="line">     /usr/bin/ssh-agent | sed <span class="string">'s/^echo/#echo/'</span> &gt; <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     <span class="built_in">echo</span> succeeded</span><br><span class="line">     chmod <span class="number">600</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     /usr/bin/ssh-add;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Source SSH settings, if applicable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="operator">-f</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     <span class="comment">#ps $&#123;SSH_AGENT_PID&#125; doesn't work under cywgin</span></span><br><span class="line">     ps -ef | grep <span class="variable">$&#123;SSH_AGENT_PID&#125;</span> | grep ssh-agent$ &gt; /dev/null || &#123;</span><br><span class="line">         start_agent;</span><br><span class="line">     &#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">     start_agent;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
+<p>在这里为止，问题终于解决，一个电脑上使用两个git账号</p>
   
 	</div>
 		<footer class="article-footer clearfix">
