@@ -95,9 +95,10 @@
 </header>
     <div class="article-content">
         
-        <p>公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业务功能外，重点就是还需要消费外部其它应用暴露的服务，同时自身也将自身的能力朝外部发布为服务。<br>SOA：面向服务架构，java级企业开发的首选。<br>微服务：采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。简单的来说，一个系统的不同模块转变成不同的服务！而且服务可以使用不同的技术加以实现！<br>SOA我想我就不用细说了，使用java EE开发过的都知道其中的具体流程和步骤，J2EE的确在统一开发中有着很好的使用，但是随着模块功能的不断扩展或者变动，对于其中一点的维护可能会影响到整体的项目。<br>所以有了微服务，彻底的将耦合性再次的降低了。为什么要讲我实习呢，因为微服务的使用会随着单一进程的传统应用被拆分为一系列的多进程服务后，意味着开发、调试、测试、集成、监控和发布的复杂度都会相应增大。 必须要有合适的自动化基础设施来支持微服务架构模式，否则开发、运维成本将大大增加。所以自动化运维是十分必要的。</p>
-<p>两者特点如下</p>
-<table>
+        <p>公司做企业级服务架构，而微服务是现今互联网很火的一个架构模式。两者既有相似的地方又有不同的特点，根据自己理解写一个对两者的看法。</p>
+<h2 id="SOA：">SOA：</h2><p>面向服务架构，java级企业开发的首选。J2EE在统一开发中有着很好的使用，但是随着模块功能的不断扩展或者变动，对于其中一点的维护可能会影响到整体的项目。<br>所以有了微服务，彻底的将耦合性再次的降低了。为什么要讲我实习呢，因为微服务的使用会随着单一进程的传统应用被拆分为一系列的多进程服务后，意味着开发、调试、测试、集成、监控和发布的复杂度都会相应增大。 必须要有合适的自动化基础设施来支持微服务架构模式，否则开发、运维成本将大大增加。所以自动化运维是十分必要的。</p>
+<h2 id="微服务：">微服务：</h2><p>采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。简单的来说，一个系统的不同模块转变成不同的服务！而且服务可以使用不同的技术加以实现！</p>
+<h3 id="两者特点如下">两者特点如下</h3><table>
 <thead>
 <tr>
 <th>SOA实现</th>
@@ -127,7 +128,8 @@
 </tr>
 </tbody>
 </table>
-<p>首先对于应用本身暴露出来的服务，是和应用一起部署的，即服务本身并不单独部署，服务本身就是业务组件已有的接口能力发布和暴露出来的<br>其次，微服务架构本身来源于互联网的思路，因此组件对外发布的服务强调了采用HTTP Rest API的方式来进行<br>微服务的基本思想在于考虑围绕着业务领域组件来创建应用，这些就应用可独立地进行开发、管理和加速。在分散的组件中使用微服务云架构和平台使部署、管理和服务功能交付变得更加简单。<br>若如果一句话来谈SOA和微服务的区别，即微服务不再强调传统SOA架构里面比较重的ESB企业服务总线，同时SOA的思想进入到单个业务系统内部实现真正的组件化</p>
+<p>两者特点可以看出，对于应用本身暴露出来的服务，是和应用一起部署的，即服务本身并不单独部署，服务本身就是业务组件已有的接口能力发布和暴露出来的<br>其次，微服务架构本身来源于互联网的思路，因此组件对外发布的服务强调了采用HTTP Rest API的方式来进行<br>微服务的基本思想在于考虑围绕着业务领域组件来创建应用，这些就应用可独立地进行开发、管理和加速。在分散的组件中使用微服务云架构和平台使部署、管理和服务功能交付变得更加简单。</p>
+<p>若如果一句话来谈SOA和微服务的区别，即微服务不再强调传统SOA架构里面比较重的ESB企业服务总线，同时SOA的思想进入到单个业务系统内部实现真正的组件化</p>
 
         
         
@@ -258,8 +260,7 @@
 <p>我们看到初始化一个调度器需要用工厂类获取实例:</p>
 <pre><code class="bash">SchedulerFactory sf =  new  StdSchedulerFactory();
 Scheduler sch = sf.getScheduler();
-然后启动:
-sch.start();
+sch.start();//启动
 </code></pre>
 <p>下面跟进StdSchedulerFactory的getScheduler()方法:</p>
 <pre><code class="bash">public  Scheduler getScheduler()  throws  SchedulerException {
@@ -354,7 +355,7 @@ sch.start();
          notifySchedulerListenersStarted();
      }
 </code></pre>
-<p>调度过程<br>调度器启动后,调度器的线程就处于运行状态了,开始执行quartz的主要工作–调度任务.</p>
+<h2 id="调度过程">调度过程</h2><p>调度器启动后,调度器的线程就处于运行状态了,开始执行quartz的主要工作–调度任务.</p>
 <p>前面已介绍过,任务的调度过程大致分为三步:</p>
 <p>1.获取待触发trigger</p>
 <p>2.触发trigger</p>
@@ -379,7 +380,7 @@ sch.start();
                          break ;
                      }
                  }
-                 /获取当前线程池中线程的数量
+                 //获取当前线程池中线程的数量
                  int  availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
                  if (availThreadCount &gt;  0 ) {  // will always be true, due to semantics of blockForAvailableThreads...
                      List&lt;OperableTrigger&gt; triggers =  null ;
@@ -555,8 +556,7 @@ sch.start();
 <p>调度器每次获取到的trigger是30s内需要执行的,所以要等待一段时间至trigger执行前2ms.在等待过程中涉及到一个新加进来更紧急的trigger的处理逻辑.分析写在注释中,不再赘述.</p>
 <p>可以看到调度器的只要在运行状态,就会不停地执行调度流程.值得注意的是,在流程的最后线程会等待一个随机的时间.这就是quartz自带的负载平衡机制.</p>
 <p>以下是三个步骤的跟进:</p>
-<p>触发器的获取<br>调度器调用:</p>
-<p>triggers = qsRsrcs.getJobStore().acquireNextTriggers(<br>now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());<br>在数据库中查找一定时间范围内将会被触发的trigger.参数的意义如下:参数1:nolaterthan = now+3000ms,即未来30s内将会被触发.参数2 最大获取数量,大小取线程池线程剩余量与定义值得较小者.参数3 时间窗口 默认为0,程序会在nolaterthan后加上窗口大小来选择trigger.quratz会在每次触发trigger后计算出trigger下次要执行的时间,并在数据库QRTZ2_TRIGGERS中的NEXT_FIRE_TIME字段中记录.查找时将当前毫秒数与该字段比较,就能找出下一段时间内将会触发的触发器.查找时,调用在JobStoreSupport类中的方法:</p>
+<h3 id="触发器的获取">触发器的获取</h3><p>调度器调用:<br>triggers = qsRsrcs.getJobStore().acquireNextTriggers(<br>now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());<br>在数据库中查找一定时间范围内将会被触发的trigger.参数的意义如下:参数1:nolaterthan = now+3000ms,即未来30s内将会被触发.参数2 最大获取数量,大小取线程池线程剩余量与定义值得较小者.参数3 时间窗口 默认为0,程序会在nolaterthan后加上窗口大小来选择trigger.quratz会在每次触发trigger后计算出trigger下次要执行的时间,并在数据库QRTZ2_TRIGGERS中的NEXT_FIRE_TIME字段中记录.查找时将当前毫秒数与该字段比较,就能找出下一段时间内将会触发的触发器.查找时,调用在JobStoreSupport类中的方法:</p>
 <pre><code class="bash">public  List&lt;OperableTrigger&gt; acquireNextTriggers( final  long  noLaterThan,  final  int  maxCount,  final  long  timeWindow)
          throws  JobPersistenceException {
 
@@ -588,7 +588,7 @@ sch.start();
 <p>int rowsUpdated = getDelegate().updateTriggerStateFromOtherState(conn, triggerKey, STATE_ACQUIRED, STATE_WAITING);</p>
 <p>最后释放锁,这时如果下一个调度器在排队获取trigger的话,则仍会执行相同的步骤.这种机制保证了trigger不会被重复获取.按照这种算法正常运行状态下调度器每次读取的trigger中会有相当一部分已被标记为被获取.</p>
 <p>获取trigger的过程进行完毕.</p>
-<p>触发trigger:<br>QuartzSchedulerThread line336:</p>
+<h3 id="触发trigger:">触发trigger:</h3><p>QuartzSchedulerThread line336:</p>
 <p>List<triggerfiredresult> res = qsRsrcs.getJobStore().triggersFired(triggers);</triggerfiredresult></p>
 <p>调用JobStoreSupport类的triggersFired()方法:</p>
 <pre><code class="bash">public  List&lt;TriggerFiredResult&gt; triggersFired( final  List&lt;OperableTrigger&gt; triggers)  throws  JobPersistenceException {
@@ -702,7 +702,7 @@ sch.start();
 <p>6.返回trigger触发结果的数据传输类TriggerFiredBundle</p>
 <p>从该方法返回后,trigger的执行过程已基本完毕.回到执行quratz操作规范的executeInNonManagedTXLock方法,将数据库锁释放.</p>
 <p>trigger触发操作完成</p>
-<p>Job执行过程:<br>再回到线程类QuartzSchedulerThread的 line353这时触发器都已出发完毕,job的详细信息都已就位</p>
+<h3 id="Job执行过程:">Job执行过程:</h3><p>再回到线程类QuartzSchedulerThread的 line353这时触发器都已出发完毕,job的详细信息都已就位</p>
 <pre><code class="bash">QuartzSchedulerThread line:<span class="number">368</span>
 qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
 shell.initialize(qs);
