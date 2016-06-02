@@ -4,28 +4,26 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>一个电脑上设置里两个不同的git账号 | ZhangChi&#39;s Blog</title>
+    <title>Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
-注意不">
+    <meta name="description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个电脑上设置里两个不同的git账号">
-<meta property="og:url" content="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/index.html">
+<meta property="og:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
+<meta property="og:url" content="http://yoursite.com/2014/11/14/eclipse中启动tomcat和直接启动tomcat的区别/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
-注意不">
+<meta property="og:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个电脑上设置里两个不同的git账号">
-<meta name="twitter:description" content="最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫
-首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key1ssh-keygen -t rsa -C &quot;your-email-address&quot;
-注意不">
+<meta name="twitter:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
+<meta name="twitter:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -86,39 +84,35 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/03/14/一个电脑上设置里两个不同的git账号/" title="一个电脑上设置里两个不同的git账号" itemprop="url">一个电脑上设置里两个不同的git账号</a>
+      <a href="/2014/11/14/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2016-03-14T11:55:00.000Z" itemprop="datePublished"> 发表于 2016-03-14</time>
+    <time datetime="2014-11-14T04:40:55.000Z" itemprop="datePublished"> 发表于 2014-11-14</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			
-		
-		</div>
-		
-		<p>   最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫</p>
-<p>首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"your-email-address"</span></span><br></pre></td></tr></table></figure></p>
-<p>注意不要覆盖之前的id_rsa，使用一个新的名字，比如id_rsa_work</p>
-<p>把id_rsa_work.pub加到你的work账号上，即把该key加到ssh agent上。由于不是使用默认的.ssh/id_rsa，所以你需要显示告诉ssh agent你的新key的位置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/id_rsa_work</span><br></pre></td></tr></table></figure></p>
-<p>但是这个步骤有个问题，总是执行不成功，提示错误如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not open a connection to your authentication agent</span><br></pre></td></tr></table></figure></p>
-<p>根据网上提示，出现这样的错误，说明ssh-agent没有启动起来，需要手动启动ssh-agent<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> $(ssh-agent)</span><br></pre></td></tr></table></figure></p>
-<p>这个方法确实可以解决问题，但我发现其实只是启动了一个临时的线程服务，电脑重启后就失效了<br>所以需要将这个服务一直保持启动状态，需要在git启动的配置文件里面加入启动脚本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">SSH_ENV=<span class="string">"<span class="variable">$HOME</span>/.ssh/environment"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> start_agent &#123;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">"Initialising new SSH agent..."</span></span><br><span class="line">     /usr/bin/ssh-agent | sed <span class="string">'s/^echo/#echo/'</span> &gt; <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     <span class="built_in">echo</span> succeeded</span><br><span class="line">     chmod <span class="number">600</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     /usr/bin/ssh-add;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Source SSH settings, if applicable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="operator">-f</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     <span class="comment">#ps $&#123;SSH_AGENT_PID&#125; doesn't work under cywgin</span></span><br><span class="line">     ps -ef | grep <span class="variable">$&#123;SSH_AGENT_PID&#125;</span> | grep ssh-agent$ &gt; /dev/null || &#123;</span><br><span class="line">         start_agent;</span><br><span class="line">     &#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">     start_agent;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
-<p>在这里为止，问题终于解决，一个电脑上使用两个git账号</p>
+		<p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
+  </div>
 
 </div>
 
@@ -126,7 +120,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/" data-title="一个电脑上设置里两个不同的git账号 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2014/11/14/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -140,39 +134,24 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/04/07/SOA服务架构和微服务架构的异同/" title="SOA服务架构和微服务架构的异同">
+ <a href="/2014/12/28/Struts2中过滤器和拦截器的区别/" title="Struts2中过滤器和拦截器的区别">
   <strong>上一篇：</strong><br/>
   <span>
-  SOA服务架构和微服务架构的异同</span>
+  Struts2中过滤器和拦截器的区别</span>
 </a>
 </div>
 
-
-<div class="next">
-<a href="/2015/10/17/Quartz原理及源码分析/"  title="Quartz原理及源码分析">
- <strong>下一篇：</strong><br/> 
- <span>Quartz原理及源码分析
-</span>
-</a>
-</div>
 
 </nav>
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/03/14/一个电脑上设置里两个不同的git账号/" data-title="一个电脑上设置里两个不同的git账号" data-url="http://yoursite.com/2016/03/14/一个电脑上设置里两个不同的git账号/"></div>
+	<div class="ds-thread" data-thread-key="2014/11/14/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别" data-url="http://yoursite.com/2014/11/14/eclipse中启动tomcat和直接启动tomcat的区别/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-  <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
- 
- 
- 
-  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -386,8 +365,6 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
         
     }
   });

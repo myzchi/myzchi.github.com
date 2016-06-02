@@ -4,22 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>ZhangChi&#39;s Blog</title>
+    <title>Quartz原理及源码分析 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ZhangChi's Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+    <meta name="description" content="Quartz是经典的Java版开源定时调度器，项目中作为作业调度管理进行使用。由于之前项目出过一次异常，调试跟进了Quartz中，研究了一下其源码和原理几个关键概念：1、Job表示一个工作，要执行的具体内容。此接口中只有一个方法void execute(JobExecutionContext context)
+2、JobDetailJobDetail表示一个具体的可执行的调度程序，Job是这个可执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Quartz原理及源码分析">
+<meta property="og:url" content="http://yoursite.com/2015/10/17/Quartz原理及源码分析/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description">
+<meta property="og:description" content="Quartz是经典的Java版开源定时调度器，项目中作为作业调度管理进行使用。由于之前项目出过一次异常，调试跟进了Quartz中，研究了一下其源码和原理几个关键概念：1、Job表示一个工作，要执行的具体内容。此接口中只有一个方法void execute(JobExecutionContext context)
+2、JobDetailJobDetail表示一个具体的可执行的调度程序，Job是这个可执">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ZhangChi's Blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="Quartz原理及源码分析">
+<meta name="twitter:description" content="Quartz是经典的Java版开源定时调度器，项目中作为作业调度管理进行使用。由于之前项目出过一次异常，调试跟进了Quartz中，研究了一下其源码和原理几个关键概念：1、Job表示一个工作，要执行的具体内容。此接口中只有一个方法void execute(JobExecutionContext context)
+2、JobDetailJobDetail表示一个具体的可执行的调度程序，Job是这个可执">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -74,167 +77,10 @@
 </div>
     </header>
     <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/04/07/SOA服务架构和微服务架构的异同/" title="SOA服务架构和微服务架构的异同" itemprop="url">SOA服务架构和微服务架构的异同</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2016-04-07T04:57:33.000Z" itemprop="datePublished"> 发表于 2016-04-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业务功能外，重点就是还需要消费外部其它应用暴露的服务，同时自身也将自身的能力朝外部发布为服务。<br>SOA：面向服务架构，java级企业开发的首选。<br>微服务：采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。简单的来说，一个系统的不同模块转变成不同的服务！而且服务可以使用不同的技术加以实现！<br>SOA我想我就不用细说了，使用java EE开发过的都知道其中的具体流程和步骤，J2EE的确在统一开发中有着很好的使用，但是随着模块功能的不断扩展或者变动，对于其中一点的维护可能会影响到整体的项目。<br>所以有了微服务，彻底的将耦合性再次的降低了。为什么要讲我实习呢，因为微服务的使用会随着单一进程的传统应用被拆分为一系列的多进程服务后，意味着开发、调试、测试、集成、监控和发布的复杂度都会相应增大。 必须要有合适的自动化基础设施来支持微服务架构模式，否则开发、运维成本将大大增加。所以自动化运维是十分必要的。</p>
-<p>两者特点如下</p>
-<table>
-<thead>
-<tr>
-<th>SOA实现</th>
-<th style="text-align:right">微服务实现</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>企业级，自顶向下实现</td>
-<td style="text-align:right">团队级，自低向上开展实施</td>
-</tr>
-<tr>
-<td>服务由多个子系统组成</td>
-<td style="text-align:right">一个系统被拆分为多个服务，粒度细</td>
-</tr>
-<tr>
-<td>企业服务总线，集中式的服务架构</td>
-<td style="text-align:right">无集中式架构，松散的服务架构</td>
-</tr>
-<tr>
-<td>集成方式复杂(ESB/WS/SOAP)</td>
-<td style="text-align:right">集成方式简单(HTTP/REST/JSON)</td>
-</tr>
-<tr>
-<td>单块架构系统，相互依赖，部署复杂</td>
-<td style="text-align:right">服务都能独立部署</td>
-</tr>
-</tbody>
-</table>
-<p>首先对于应用本身暴露出来的服务，是和应用一起部署的，即服务本身并不单独部署，服务本身就是业务组件已有的接口能力发布和暴露出来的<br>其次，微服务架构本身来源于互联网的思路，因此组件对外发布的服务强调了采用HTTP Rest API的方式来进行<br>微服务的基本思想在于考虑围绕着业务领域组件来创建应用，这些就应用可独立地进行开发、管理和加速。在分散的组件中使用微服务云架构和平台使部署、管理和服务功能交付变得更加简单。<br>若如果一句话来谈SOA和微服务的区别，即微服务不再强调传统SOA架构里面比较重的ESB企业服务总线，同时SOA的思想进入到单个业务系统内部实现真正的组件化</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
+      <div id="main" class="post" itemscope itemprop="blogPost">
   
-  <span></span> <a href="/tags/SOA/">SOA</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/04/07/SOA服务架构和微服务架构的异同/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/04/07/SOA服务架构和微服务架构的异同/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/03/14/一个电脑上设置里两个不同的git账号/" title="一个电脑上设置里两个不同的git账号" itemprop="url">一个电脑上设置里两个不同的git账号</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2016-03-14T11:55:00.000Z" itemprop="datePublished"> 发表于 2016-03-14</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>   最近公司新项目也要使用git进行版本管理，由于之前已经有github在电脑上生存了一个公钥，但是用户名和邮箱都是自己的额，现在需要用公司邮箱重新生成公钥，发现在同一个电脑上使用2个git账号还真折腾了半天功夫</p>
-<p>首先需要生成SSH key，由于之前已经存在一个github的公钥，所以还要再生成一个工作的key<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"your-email-address"</span></span><br></pre></td></tr></table></figure></p>
-<p>注意不要覆盖之前的id_rsa，使用一个新的名字，比如id_rsa_work</p>
-<p>把id_rsa_work.pub加到你的work账号上，即把该key加到ssh agent上。由于不是使用默认的.ssh/id_rsa，所以你需要显示告诉ssh agent你的新key的位置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/id_rsa_work</span><br></pre></td></tr></table></figure></p>
-<p>但是这个步骤有个问题，总是执行不成功，提示错误如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not open a connection to your authentication agent</span><br></pre></td></tr></table></figure></p>
-<p>根据网上提示，出现这样的错误，说明ssh-agent没有启动起来，需要手动启动ssh-agent<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> $(ssh-agent)</span><br></pre></td></tr></table></figure></p>
-<p>这个方法确实可以解决问题，但我发现其实只是启动了一个临时的线程服务，电脑重启后就失效了<br>所以需要将这个服务一直保持启动状态，需要在git启动的配置文件里面加入启动脚本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">SSH_ENV=<span class="string">"<span class="variable">$HOME</span>/.ssh/environment"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> start_agent &#123;</span><br><span class="line">     <span class="built_in">echo</span> <span class="string">"Initialising new SSH agent..."</span></span><br><span class="line">     /usr/bin/ssh-agent | sed <span class="string">'s/^echo/#echo/'</span> &gt; <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     <span class="built_in">echo</span> succeeded</span><br><span class="line">     chmod <span class="number">600</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     /usr/bin/ssh-add;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Source SSH settings, if applicable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="operator">-f</span> <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">     . <span class="string">"<span class="variable">$&#123;SSH_ENV&#125;</span>"</span> &gt; /dev/null</span><br><span class="line">     <span class="comment">#ps $&#123;SSH_AGENT_PID&#125; doesn't work under cywgin</span></span><br><span class="line">     ps -ef | grep <span class="variable">$&#123;SSH_AGENT_PID&#125;</span> | grep ssh-agent$ &gt; /dev/null || &#123;</span><br><span class="line">         start_agent;</span><br><span class="line">     &#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">     start_agent;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
-<p>在这里为止，问题终于解决，一个电脑上使用两个git账号</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/03/14/一个电脑上设置里两个不同的git账号/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/14/一个电脑上设置里两个不同的git账号/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
   <h1 itemprop="name">
     
       <a href="/2015/10/17/Quartz原理及源码分析/" title="Quartz原理及源码分析" itemprop="url">Quartz原理及源码分析</a>
@@ -248,9 +94,16 @@
     
   </p>
 </header>
-    <div class="article-content">
-        
-        <p>Quartz是经典的Java版开源定时调度器，项目中作为作业调度管理进行使用。由于之前项目出过一次异常，调试跟进了Quartz中，研究了一下其源码和原理<br>几个关键概念：<br>1、Job<br>表示一个工作，要执行的具体内容。此接口中只有一个方法<br>void execute(JobExecutionContext context)</p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>Quartz是经典的Java版开源定时调度器，项目中作为作业调度管理进行使用。由于之前项目出过一次异常，调试跟进了Quartz中，研究了一下其源码和原理<br>几个关键概念：<br>1、Job<br>表示一个工作，要执行的具体内容。此接口中只有一个方法<br>void execute(JobExecutionContext context)</p>
 <p>2、JobDetail<br>JobDetail表示一个具体的可执行的调度程序，Job是这个可执行程调度程序所要执行的内容，另外JobDetail还包含了这个任务调度的方案和策略。</p>
 <p>3、Trigger代表一个调度参数的配置，什么时候去调。</p>
 <p>4、Scheduler代表一个调度容器，一个调度容器中可以注册多个JobDetail和Trigger。当Trigger与JobDetail组合，就可以被Scheduler容器调度了。</p>
@@ -711,534 +564,65 @@ shell.initialize(qs);
 <p>在最后调度线程生成了一个随机的等待时间,进入短暂的等待,这使得其他节点的调度器都有机会获取数据库资源.如此就实现了quratz的负载平衡.</p>
 <p>这样一次完整的调度过程就结束了.调度器线程进入下一次循环.、</p>
 <p>总结<br>简单地说,quartz的分布式调度策略是以数据库为边界资源的一种异步策略.各个调度器都遵守一个基于数据库锁的操作规则保证了操作的唯一性.同时多个节点的异步运行保证了服务的可靠</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/10/17/Quartz原理及源码分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/17/Quartz原理及源码分析/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/09/阅读记录（2015年6月9日）/" title="阅读记录-2015年6月9日" itemprop="url">阅读记录-2015年6月9日</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-09T11:59:04.000Z" itemprop="datePublished"> 发表于 2015-06-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近读了两本书：《淘宝技术这十年》和《大型网站技术架构》，都是阿里系出品，前者是叙事+发展，以描述阿里的框架发展为背景，后者主要讲架构的组织和结构，遇到瓶颈和问题的处理和解决方案，在此记录看两本书的读书笔记</p>
-<h2 id="架构及发展">架构及发展</h2><p>大型网站并不是一次就发展起来的，而是一步步演化而来，”不要试图直接建设搭建一个大型网站架构”</p>
-<h3 id="应用和数据分离">应用和数据分离</h3><p>应用服务器和数据服务器对硬件需求不同，使不同特性服务器承担不同角色</p>
-<h3 id="使用缓存">使用缓存</h3><p>根据80%的数据访问在20%的数据上，将这小部分数据缓存在内存中，减少数据库的压力；例本地缓存分类：有页面缓存、前端页面静态化、前端页面的片段化缓存、以及数据缓存，</p>
-<h3 id="服务器集群">服务器集群</h3><p>使用集群是解决高并发、处理海量数据的常用手段。当一台的服务器处理能力存储空间不足时，不要企图换更大的服务器，更恰当的做法是增加服务器分担原有服务器的压力</p>
-<h3 id="数据库读写分离">数据库读写分离</h3><p>根据数据库提供的主从热备功能，写数据的时候，访问主数据库，主数据库通过主从复制机制将数据更新到从数据库，这样从数据库读数据库的时候，可以通过从数据库读取数据</p>
-<h3 id="反向代理和CDN">反向代理和CDN</h3><p>CDN部署在网络提供商的机房，当用户访问网站服务时，可以从最近的网络提供商机房获取数据；反向代理部署在网站的中心机房，首先访问反向代理服务器缓存的资源</p>
-<h3 id="分布式(文件系统和数据库)">分布式(文件系统和数据库)</h3><p>分布式数据库是网站数据库拆分的最后手段，在单表数据规模非常庞大时使用</p>
-<h3 id="使用NOSQL">使用NOSQL</h3><p>非关系型数据库对于分布式需求和海量数据有着先天的处理优势，同时可以减少应用访问数据的麻烦；当前公司业务就使用了redis这种非关系型数据库作为流量经营中政企的数据访问</p>
-<h3 id="业务拆分">业务拆分</h3><p>大型网站会将首页、商铺、订单、买家、卖家分成不同的产品线；包括我当前公司中准备启动的中心模块化都是在向这方向发展</p>
-<h3 id="两本书的思维导图">两本书的思维导图</h3><p>来自网络：大CC<br><img src="http://ww3.sinaimg.cn/bmiddle/945f665bgw1ete46azclkj20op13zwig.jpg"></p>
-<p><img src="http://ww2.sinaimg.cn/bmiddle/945f665bgw1ete46cdadsj20yn36ce2g.jpg"></p>
-<p>豆瓣上有大牛说其中有些内容是入门级，评分都是7分多，不过对我这种网站架构经验不足的人来说，确实已经达到了拓展视野的目的</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
-</div>
-
-
-  <div class="article-tags">
   
-  <span></span> <a href="/tags/阅读/">阅读</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/06/09/阅读记录（2015年6月9日）/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/09/阅读记录（2015年6月9日）/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
-<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
-<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
-<h1 id="Redis安装">Redis安装</h1><hr>
-<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
-<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
-<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
-<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
-<p>说明已经成功了</p>
-<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
-<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
-<h1 id="Redis参数配置">Redis参数配置</h1>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
+	</div>
+		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Redis/">Redis</a>
-  </div>
 
 </div>
 
 
 
-
-<div class="comments-count">
+	<div class="article-share" id="share">
 	
-	  	<span></span>
-		<a href="/2015/05/24/redis学习总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/24/redis学习总结/" data-count-type="comments">&nbsp;</a>
+	  <div data-url="http://yoursite.com/2015/10/17/Quartz原理及源码分析/" data-title="Quartz原理及源码分析 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  </div>
 	
-</div>
+	</div>
+
 
 </footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/13/NoSQL思维导图/" title="NoSQL思维导图" itemprop="url">NoSQL思维导图</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-13T02:38:36.000Z" itemprop="datePublished"> 发表于 2015-05-13</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/NoSQL.png"></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/NoSQL/">NoSQL</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
+   	       
+	</article>
 	
-	  	<span></span>
-		<a href="/2015/05/13/NoSQL思维导图/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/13/NoSQL思维导图/" data-count-type="comments">&nbsp;</a>
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/14/一个电脑上设置里两个不同的git账号/" title="一个电脑上设置里两个不同的git账号">
+  <strong>上一篇：</strong><br/>
+  <span>
+  一个电脑上设置里两个不同的git账号</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/09/阅读记录（2015年6月9日）/"  title="阅读记录-2015年6月9日">
+ <strong>下一篇：</strong><br/> 
+ <span>阅读记录-2015年6月9日
+</span>
+</a>
+</div>
+
+</nav>
+
 	
-</div>
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/10/17/Quartz原理及源码分析/" data-title="Quartz原理及源码分析" data-url="http://yoursite.com/2015/10/17/Quartz原理及源码分析/"></div>
+</section>
 
-</footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/02/hexo-github搭建过程总结/" title="hexo+github搭建过程总结" itemprop="url">hexo+github搭建过程总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-02T09:34:40.000Z" itemprop="datePublished"> 发表于 2015-05-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>   折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→</p>
-<h2 id="git客户端">git客户端</h2><p>git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo</span><br><span class="line">sh.exe<span class="string">": hexo: command not found</span></span><br></pre></td></tr></table></figure>
-<p>找各种方法都不行，后来把两个客户端都卸载了，只安装msysgit再装hexo就OK了</p>
-<h2 id="github_pages">github pages</h2><p>这是一个疑问，到现在还没有完全弄明白，就是在新建一个github工程后，直接在master分支新建文件作为github pages的项目，包括我在网上看到各种步骤和指引都是这样，但是部署好以后，一直报github 404<br>我的解决办法是在项目的setting的里面，找到github pages的选项，选择Automatic page generator，自动产生一些github pages的文件，然后再git上传文件覆盖它，再部署就可以了</p>
-<h2 id="hexo_deploy">hexo deploy</h2><p>在hexo安装好以后，把本地生成的文件传到远程github上，执行hexo deploy，不报任何错，然始终传不上去<br><img src="http://img.ask.csdn.net/upload/201505/01/1430452763_372695.png"><br>重新配置根目录下的_config.yml即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy: </span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repository: git@github.com:corbam/myzchi.github.com.git</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure></p>
-<p>其中第二项的repository，很多人配置成</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repository: https://github.com/xxx/xxx.github.io.git</span><br></pre></td></tr></table></figure>
-<p>这种https的url配置后我是上传不上去的，只能安装第一种即ssh的url方式配置</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/git/">git</a><a href="/tags/github/">github</a><a href="/tags/hexo/">hexo</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/02/hexo-github搭建过程总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/02/hexo-github搭建过程总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/06/普陀山东极岛之旅/" title="普陀山+东极岛之旅" itemprop="url">普陀山+东极岛之旅</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-06T03:18:48.000Z" itemprop="datePublished"> 发表于 2015-04-06</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Day1:普陀山">Day1:普陀山</h2><h2 id=""><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan1.JPG"></h2><h2 id="-1"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan2.JPG"></h2><h2 id="-2"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan3.JPG"></h2><h2 id="这名字~">这名字~</h2><h2 id="-3"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan4.JPG"></h2><h2 id="加了点”duang~duang~duang”">加了点”duang~duang~duang”</h2><h2 id="-4"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan5.JPG"></h2><h2 id="-5"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan6.JPG"></h2><h2 id="-6"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan7.JPG"></h2><h2 id="-7"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan8.JPG"></h2><h2 id="Day2:东极岛">Day2:东极岛</h2><h2 id="-8"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan9.JPG"></h2><h2 id="-9"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan10.JPG"></h2><h2 id="-10"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan11.JPG"></h2><h2 id="-11"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan12.JPG"></h2><h2 id="-12"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan13.JPG"></h2><h2 id="江河教的小学现在已经成涂鸦点了">江河教的小学现在已经成涂鸦点了</h2><h2 id="-13"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan14.JPG"></h2><h2 id="遇上大雾，后会无期的最后片段的神还原">遇上大雾，后会无期的最后片段的神还原</h2><h2 id="-14"><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan15.JPG"></h2><p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/putuoshan16.JPG"></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/旅游摄影/">旅游摄影</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/摄影/">摄影</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/04/06/普陀山东极岛之旅/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/04/06/普陀山东极岛之旅/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/04/01/反射机制学习总结/" title="反射机制学习总结" itemprop="url">反射机制学习总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-04-01T09:55:57.000Z" itemprop="datePublished"> 发表于 2015-04-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>反射是指可以获取任意一个的类或者对象（包括运行状态中）的方法和属性<br>1.Class是一个描述类的类，封装了描述方法的Method，描述字段的Field，描述构造器Constructor等属性</p>
-<p>2.如何得到Class对象<br>2.1 Person.class<br>2.2 person.getclass<br>2.3 Class.forName(“com.person”)</p>
-<p>3.关于Method<br>3.1如何获取method<br>1)getDeclareMethods：得到Method的数组<br>2)getDeclareMethod(String methodName，Class…parameterTypes)<br>3.2 如果调用method<br>1)如果方法是private，先调用method的setAccssible(true)，使其变为可访问<br>2)method.invoke(obj…)</p>
-<p>4.关于Field<br>4.1如何获取Field：getField(String fieldName)<br>4.2如何获取Field的值<br>1)setAccssible(true)<br>2)field.set(obj…)<br>4.3如何设置Field的值<br>field.set(obj)</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/反射/">反射</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/04/01/反射机制学习总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/04/01/反射机制学习总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/28/太子湾公园/" title="太子湾公园" itemprop="url">太子湾公园</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-28T03:17:32.000Z" itemprop="datePublished"> 发表于 2015-03-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="大法A6000套头直出">大法A6000套头直出</h2><p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan1.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan2.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan5.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan7.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan3.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan4.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan5.JPG"></p>
-<hr>
-<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/taiziwan8.JPG"></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/旅游摄影/">旅游摄影</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/摄影/">摄影</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/03/28/太子湾公园/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/03/28/太子湾公园/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-
-  <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
-  </nav>
-
-</div>
+</div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -1452,12 +836,69 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
 
 
 
@@ -1530,4 +971,4 @@ $(document).ready(function(){
 <!-- Tiny_search End -->
 
   </body>
- </html>
+</html>

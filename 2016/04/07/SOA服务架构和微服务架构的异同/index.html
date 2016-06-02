@@ -4,26 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog</title>
+    <title>SOA服务架构和微服务架构的异同 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Corbam">
     
 
     
-    <meta name="description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+    <meta name="description" content="公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta property="og:url" content="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/index.html">
+<meta property="og:title" content="SOA服务架构和微服务架构的异同">
+<meta property="og:url" content="http://yoursite.com/2016/04/07/SOA服务架构和微服务架构的异同/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png">
-<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png">
+<meta property="og:description" content="公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Eclipse中启动tomcat和直接启动tomcat的区别">
-<meta name="twitter:description" content="最近一次在eclipse启动tomcat，然后打开http://localhost:8080, 竟然404觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat原因是因">
+<meta name="twitter:title" content="SOA服务架构和微服务架构的异同">
+<meta name="twitter:description" content="公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -84,20 +80,59 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" title="Eclipse中启动tomcat和直接启动tomcat的区别" itemprop="url">Eclipse中启动tomcat和直接启动tomcat的区别</a>
+      <a href="/2016/04/07/SOA服务架构和微服务架构的异同/" title="SOA服务架构和微服务架构的异同" itemprop="url">SOA服务架构和微服务架构的异同</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Corbam" target="_blank" itemprop="author">Corbam</a>
 		
   <p class="article-time">
-    <time datetime="2015-03-09T04:40:55.000Z" itemprop="datePublished"> 发表于 2015-03-09</time>
+    <time datetime="2016-04-07T04:57:33.000Z" itemprop="datePublished"> 发表于 2016-04-07</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<p>最近一次在eclipse启动tomcat，然后打开<a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a>, 竟然404<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143457.png"><br>觉得不管项目是不是正常还是失败，最起码tomcat启动起来了吧，但事实并不是如此，查资料才知道在eclipse启动tomcat，其实是eclipse调用tomcat核心的组件，内置到eclipse中，启动和部署时和真正的tomcat毫无关系，下面start.bat启动真正的tomcat<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143607.png"><br>原因是因为我们在eclipse设置的tomcat的Server locations路径为: Use workspace metadata<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505143542.png"><br>将路径选择为第二项，即改为<br><img src="http://7xiwo7.com1.z0.glb.clouddn.com/tomcat20150505144451.png"><br>server_path改为tomcat的目录，再启动就OK了</p>
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>公司做企业级服务架构，而现今互联网很火的一个架构模式——微服务架构，微服务架构强调的第一个重点就是业务系统需要彻底的组件化和服务化，原有的单个业务系统会拆分为多个可以独立开发，设计，运行和运维的小应用。这些小应用之间通过服务完成交互和集成。每个小应用从前端web ui，到控制层，逻辑层，数据库访问，数据库都完全是独立的一套。在这里我们不用组件而用小应用这个词更加合适，每个小应用除了完成自身本身的业务功能外，重点就是还需要消费外部其它应用暴露的服务，同时自身也将自身的能力朝外部发布为服务。<br>SOA：面向服务架构，java级企业开发的首选。<br>微服务：采用一组服务的方式来构建一个应用，服务独立部署在不同的进程中，不同服务通过一些轻量级交互机制来通信，例如 RPC、HTTP 等，服务可独立扩展伸缩，每个服务定义了明确的边界，不同的服务甚至可以采用不同的编程语言来实现，由独立的团队来维护。简单的来说，一个系统的不同模块转变成不同的服务！而且服务可以使用不同的技术加以实现！<br>SOA我想我就不用细说了，使用java EE开发过的都知道其中的具体流程和步骤，J2EE的确在统一开发中有着很好的使用，但是随着模块功能的不断扩展或者变动，对于其中一点的维护可能会影响到整体的项目。<br>所以有了微服务，彻底的将耦合性再次的降低了。为什么要讲我实习呢，因为微服务的使用会随着单一进程的传统应用被拆分为一系列的多进程服务后，意味着开发、调试、测试、集成、监控和发布的复杂度都会相应增大。 必须要有合适的自动化基础设施来支持微服务架构模式，否则开发、运维成本将大大增加。所以自动化运维是十分必要的。</p>
+<p>两者特点如下</p>
+<table>
+<thead>
+<tr>
+<th>SOA实现</th>
+<th style="text-align:right">微服务实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>企业级，自顶向下实现</td>
+<td style="text-align:right">团队级，自低向上开展实施</td>
+</tr>
+<tr>
+<td>服务由多个子系统组成</td>
+<td style="text-align:right">一个系统被拆分为多个服务，粒度细</td>
+</tr>
+<tr>
+<td>企业服务总线，集中式的服务架构</td>
+<td style="text-align:right">无集中式架构，松散的服务架构</td>
+</tr>
+<tr>
+<td>集成方式复杂(ESB/WS/SOAP)</td>
+<td style="text-align:right">集成方式简单(HTTP/REST/JSON)</td>
+</tr>
+<tr>
+<td>单块架构系统，相互依赖，部署复杂</td>
+<td style="text-align:right">服务都能独立部署</td>
+</tr>
+</tbody>
+</table>
+<p>首先对于应用本身暴露出来的服务，是和应用一起部署的，即服务本身并不单独部署，服务本身就是业务组件已有的接口能力发布和暴露出来的<br>其次，微服务架构本身来源于互联网的思路，因此组件对外发布的服务强调了采用HTTP Rest API的方式来进行<br>微服务的基本思想在于考虑围绕着业务领域组件来创建应用，这些就应用可独立地进行开发、管理和加速。在分散的组件中使用微服务云架构和平台使部署、管理和服务功能交付变得更加简单。<br>若如果一句话来谈SOA和微服务的区别，即微服务不再强调传统SOA架构里面比较重的ESB企业服务总线，同时SOA的思想进入到单个业务系统内部实现真正的组件化</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -111,7 +146,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/eclipse/">eclipse</a><a href="/tags/tomcat/">tomcat</a>
+  <span></span> <a href="/tags/SOA/">SOA</a>
   </div>
 
 </div>
@@ -120,7 +155,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2016/04/07/SOA服务架构和微服务架构的异同/" data-title="SOA服务架构和微服务架构的异同 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -133,19 +168,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/03/28/太子湾公园/" title="太子湾公园">
-  <strong>上一篇：</strong><br/>
-  <span>
-  太子湾公园</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/02/02/service报错的问题/"  title="mysql卸载重新安装后start service报错的问题">
+<a href="/2016/03/14/一个电脑上设置里两个不同的git账号/"  title="一个电脑上设置里两个不同的git账号">
  <strong>下一篇：</strong><br/> 
- <span>mysql卸载重新安装后start service报错的问题
+ <span>一个电脑上设置里两个不同的git账号
 </span>
 </a>
 </div>
@@ -154,12 +181,19 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/" data-title="Eclipse中启动tomcat和直接启动tomcat的区别" data-url="http://yoursite.com/2015/03/09/eclipse中启动tomcat和直接启动tomcat的区别/"></div>
+	<div class="ds-thread" data-thread-key="2016/04/07/SOA服务架构和微服务架构的异同/" data-title="SOA服务架构和微服务架构的异同" data-url="http://yoursite.com/2016/04/07/SOA服务架构和微服务架构的异同/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -171,7 +205,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>6</sup></a></li>
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>8</sup></a></li>
 		  
 		
 		  
@@ -196,7 +230,7 @@
 			
 		
 			
-				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
 			
 		
 			
@@ -212,11 +246,11 @@
 			
 		
 			
-				<li><a href="/tags/阅读/" title="阅读">阅读<sup>1</sup></a></li>
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+				<li><a href="/tags/阅读/" title="阅读">阅读<sup>1</sup></a></li>
 			
 		
 			
@@ -229,6 +263,14 @@
 		
 			
 				<li><a href="/tags/tomcat/" title="tomcat">tomcat<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SOA/" title="SOA">SOA<sup>1</sup></a></li>
 			
 		
 			
@@ -365,6 +407,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
