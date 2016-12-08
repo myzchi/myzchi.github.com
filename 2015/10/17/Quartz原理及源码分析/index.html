@@ -99,7 +99,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#调度过程"><span class="toc-number">1.</span> <span class="toc-text">调度过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#触发器的获取"><span class="toc-number">1.1.</span> <span class="toc-text">触发器的获取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#触发trigger:"><span class="toc-number">1.2.</span> <span class="toc-text">触发trigger:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Job执行过程:"><span class="toc-number">1.3.</span> <span class="toc-text">Job执行过程:</span></a></li></ol></li></ol>
+			
 		
 		</div>
 		
@@ -107,457 +107,206 @@
 <p>2、JobDetail<br>JobDetail表示一个具体的可执行的调度程序，Job是这个可执行程调度程序所要执行的内容，另外JobDetail还包含了这个任务调度的方案和策略。</p>
 <p>3、Trigger代表一个调度参数的配置，什么时候去调。</p>
 <p>4、Scheduler代表一个调度容器，一个调度容器中可以注册多个JobDetail和Trigger。当Trigger与JobDetail组合，就可以被Scheduler容器调度了。</p>
-<p>最简单的HelloWorld示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public  class  HelloWorldMain &#123;</span><br><span class="line">     Log <span class="built_in">log</span> = LogFactory.getLog(HelloWorldMain. class );</span><br><span class="line">     </span><br><span class="line">     public  void  <span class="function"><span class="title">run</span></span>() &#123;</span><br><span class="line">         try  &#123;</span><br><span class="line">             //取得Schedule对象</span><br><span class="line">             SchedulerFactory sf =  new  StdSchedulerFactory();</span><br><span class="line">             Scheduler sch = sf.getScheduler(); </span><br><span class="line">             </span><br><span class="line">             JobDetail jd =  new  JobDetail( <span class="string">"HelloWorldJobDetail"</span> ,Scheduler.DEFAULT_GROUP,HelloWorldJob. class );</span><br><span class="line">             Trigger tg = TriggerUtils.makeMinutelyTrigger( <span class="number">1</span> );</span><br><span class="line">             tg.setName( <span class="string">"HelloWorldTrigger"</span> );</span><br><span class="line">             </span><br><span class="line">             sch.scheduleJob(jd, tg);</span><br><span class="line">             sch.start();</span><br><span class="line">         &#125;  catch  ( Exception e ) &#123;</span><br><span class="line">             e.printStackTrace();</span><br><span class="line">             </span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     public  static  void  main(String[] args) &#123;</span><br><span class="line">         HelloWorldMain hw =  new  HelloWorldMain();</span><br><span class="line">         hw.run();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>我们看到初始化一个调度器需要用工厂类获取实例:</p>
-<pre><code class="bash">SchedulerFactory sf =  new  StdSchedulerFactory();
-Scheduler sch = sf.getScheduler();
-sch.start();//启动
-</code></pre>
-<p>下面跟进StdSchedulerFactory的getScheduler()方法:</p>
-<pre><code class="bash">public  Scheduler getScheduler()  throws  SchedulerException {
-         <span class="keyword">if</span>  (cfg ==  null ) {
-             initialize();
-         }
-         SchedulerRepository <span class="built_in">sched</span>Rep = SchedulerRepository.getInstance();
-         //从<span class="string">"调度器仓库"</span>中根据properties的SchedulerName配置获取一个调度器实例
-         Scheduler <span class="built_in">sched</span> = <span class="built_in">sched</span>Rep.lookup(getSchedulerName());
-         <span class="keyword">if</span>  (<span class="built_in">sched</span> !=  null ) {
-             <span class="keyword">if</span>  (sched.isShutdown()) {
-                 <span class="built_in">sched</span>Rep.remove(getSchedulerName());
-             }  <span class="keyword">else</span>  {
-                 <span class="built_in">return</span>  <span class="built_in">sched</span>;
-             }
-         }
-         //初始化调度器
-         <span class="built_in">sched</span> = instantiate();
-         <span class="built_in">return</span>  <span class="built_in">sched</span>;
-     }
-</code></pre>
-<p>跟进初始化调度器方法sched = instantiate();发现是一个700多行的初始化方法,涉及到</p>
-<p>读取配置资源,<br>生成QuartzScheduler对象,<br>创建该对象的运行线程,并启动线程;<br>初始化JobStore,QuartzScheduler,DBConnectionManager等重要组件,<br>至此,调度器的初始化工作已完成,初始化工作中quratz读取了数据库中存放的对应当前调度器的锁信息,对应CRM中的表QRTZ2_LOCKS,中的STATE_ACCESS,TRIGGER_ACCESS两个LOCK_NAME.</p>
-<pre><code class="bash">public  void  initialize(ClassLoadHelper loadHelper,
-             SchedulerSignaler signaler)  throws  SchedulerConfigException {
-         <span class="keyword">if</span>  (dsName ==  null ) {
-             throw  new  SchedulerConfigException( <span class="string">"DataSource name not set."</span> );
-         }
-         classLoadHelper = loadHelper;
-         <span class="keyword">if</span> (isThreadsInheritInitializersClassLoadContext()) {
-             log.info( <span class="string">"JDBCJobStore threads will inherit ContextClassLoader of thread: "</span>  + Thread.currentThread().getName());
-             initializersLoader = Thread.currentThread().getContextClassLoader();
-         }
+<p>最简单的HelloWorld示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>  <span class="class"><span class="keyword">class</span>  <span class="title">HelloWorldMain</span> </span>&#123;</span><br><span class="line">     Log log = LogFactory.getLog(HelloWorldMain. <span class="class"><span class="keyword">class</span> )</span>;</span><br><span class="line">     </span><br><span class="line">     <span class="function"><span class="keyword">public</span>  <span class="keyword">void</span>  <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">try</span>  &#123;</span><br><span class="line">             <span class="comment">//取得Schedule对象</span></span><br><span class="line">             SchedulerFactory sf =  <span class="keyword">new</span>  StdSchedulerFactory();</span><br><span class="line">             Scheduler sch = sf.getScheduler(); </span><br><span class="line">             </span><br><span class="line">             JobDetail jd =  <span class="keyword">new</span>  JobDetail( <span class="string">"HelloWorldJobDetail"</span> ,Scheduler.DEFAULT_GROUP,HelloWorldJob. <span class="class"><span class="keyword">class</span> )</span>;</span><br><span class="line">             Trigger tg = TriggerUtils.makeMinutelyTrigger( <span class="number">1</span> );</span><br><span class="line">             tg.setName( <span class="string">"HelloWorldTrigger"</span> );</span><br><span class="line">             </span><br><span class="line">             sch.scheduleJob(jd, tg);</span><br><span class="line">             sch.start();</span><br><span class="line">         &#125;  <span class="keyword">catch</span>  ( Exception e ) &#123;</span><br><span class="line">             e.printStackTrace();</span><br><span class="line">             </span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">         HelloWorldMain hw =  <span class="keyword">new</span>  HelloWorldMain();</span><br><span class="line">         hw.run();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们看到初始化一个调度器需要用工厂类获取实例:<br><figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SchedulerFactory sf =  <span class="keyword">new</span>  StdSchedulerFactory();</span><br><span class="line">Scheduler sch = sf.getScheduler();</span><br><span class="line">sch.start();<span class="comment">//启动</span></span><br><span class="line"><span class="string">``</span><span class="string">` </span><br><span class="line"></span><br><span class="line">下面跟进StdSchedulerFactory的getScheduler()方法:</span></span><br></pre></td></tr></table></figure></p>
+<p>public  Scheduler getScheduler()  throws  SchedulerException {<br>         if  (cfg ==  null ) {<br>             initialize();<br>         }<br>         SchedulerRepository schedRep = SchedulerRepository.getInstance();<br>         //从”调度器仓库”中根据properties的SchedulerName配置获取一个调度器实例<br>         Scheduler sched = schedRep.lookup(getSchedulerName());<br>         if  (sched !=  null ) {<br>             if  (sched.isShutdown()) {<br>                 schedRep.remove(getSchedulerName());<br>             }  else  {<br>                 return  sched;<br>             }<br>         }<br>         //初始化调度器<br>         sched = instantiate();<br>         return  sched;<br>     }<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">跟进初始化调度器方法<span class="built_in">sched</span> = instantiate();发现是一个<span class="number">700</span>多行的初始化方法,涉及到</span><br><span class="line"></span><br><span class="line">读取配置资源,</span><br><span class="line">生成QuartzScheduler对象,</span><br><span class="line">创建该对象的运行线程,并启动线程;</span><br><span class="line">初始化JobStore,QuartzScheduler,DBConnectionManager等重要组件, </span><br><span class="line">至此,调度器的初始化工作已完成,初始化工作中quratz读取了数据库中存放的对应当前调度器的锁信息,对应CRM中的表QRTZ2_LOCKS,中的STATE_ACCESS,TRIGGER_ACCESS两个LOCK_NAME.</span><br></pre></td></tr></table></figure></p>
+<p>public  void  initialize(ClassLoadHelper loadHelper,<br>             SchedulerSignaler signaler)  throws  SchedulerConfigException {<br>         if  (dsName ==  null ) {<br>             throw  new  SchedulerConfigException( “DataSource name not set.” );<br>         }<br>         classLoadHelper = loadHelper;<br>         if (isThreadsInheritInitializersClassLoadContext()) {<br>             log.info( “JDBCJobStore threads will inherit ContextClassLoader of thread: “  + Thread.currentThread().getName());<br>             initializersLoader = Thread.currentThread().getContextClassLoader();<br>         }</p>
+<pre><code>    <span class="keyword">this</span> .schedSignaler = signaler;
+    <span class="comment">// If the user hasn't specified an explicit lock handler, then</span>
+    <span class="comment">// choose one based on CMT/Clustered/UseDBLocks.</span>
+    <span class="keyword">if</span>  (getLockHandler() ==  <span class="keyword">null</span> ) {
 
-         this .schedSignaler = signaler;
-         // If the user hasn<span class="string">'t specified an explicit lock handler, then
-         // choose one based on CMT/Clustered/UseDBLocks.
-         if  (getLockHandler() ==  null ) {
+        <span class="comment">// If the user hasn't specified an explicit lock handler,</span>
+        <span class="comment">// then we *must* use DB locks with clustering</span>
+        <span class="keyword">if</span>  (isClustered()) {
+            setUseDBLocks( <span class="keyword">true</span> );
+        }
 
-             // If the user hasn'</span>t specified an explicit lock handler,
-             // <span class="keyword">then</span> we *must* use DB locks with clustering
-             <span class="keyword">if</span>  (isClustered()) {
-                 <span class="built_in">set</span>UseDBLocks( <span class="literal">true</span> );
-             }
+        <span class="keyword">if</span>  (getUseDBLocks()) {
+            <span class="keyword">if</span> (getDriverDelegateClass() !=  <span class="keyword">null</span>  &amp;&amp; getDriverDelegateClass().equals(MSSQLDelegate. <span class="class"><span class="keyword">class</span> .<span class="title">getName</span>())) </span>{
+                <span class="keyword">if</span> (getSelectWithLockSQL() ==  <span class="keyword">null</span> ) {
+                    <span class="comment">//读取数据库LOCKS表中对应当前调度器的锁信息</span>
+                    <span class="built_in">String</span> msSqlDflt =  <span class="string">"SELECT * FROM {0}LOCKS WITH (UPDLOCK,ROWLOCK) WHERE "</span>  + COL_SCHEDULER_NAME +  <span class="string">" = {1} AND LOCK_NAME = ?"</span> ;
+                    getLog().info( <span class="string">"Detected usage of MSSQLDelegate class - defaulting 'selectWithLockSQL' to '"</span>  + msSqlDflt +  <span class="string">"'."</span> );
+                    setSelectWithLockSQL(msSqlDflt);
+                }
+            }
+            getLog().info( <span class="string">"Using db table-based data access locking (synchronization)."</span> );
+            setLockHandler( <span class="keyword">new</span>  StdRowLockSemaphore(getTablePrefix(), getInstanceName(), getSelectWithLockSQL()));
+        }  <span class="keyword">else</span>  {
+            getLog().info(
+                <span class="string">"Using thread monitor-based data access locking (synchronization)."</span> );
+            setLockHandler( <span class="keyword">new</span>  SimpleSemaphore());
+        }
+    }
+}
+</code></pre><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">当调用sch.<span class="built_in">start</span>();方法时,scheduler做了如下工作:</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>.通知listener开始启动</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.启动调度器线程</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.启动plugin</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>.通知listener启动完成</span><br></pre></td></tr></table></figure>
+<p>public  void  start()  throws  SchedulerException {<br>         if  (shuttingDown|| closed) {<br>             throw  new  SchedulerException(<br>                     “The Scheduler cannot be restarted after shutdown() has been called.” );<br>         }<br>         // QTZ-212 : calling new schedulerStarting() method on the listeners<br>         // right after entering start()<br>         //通知该调度器的listener启动开始<br>         notifySchedulerListenersStarting();<br>         if  (initialStart ==  null ) {<br>             initialStart =  new  Date();<br>             //启动调度器的线程<br>             this .resources.getJobStore().schedulerStarted();<br>             //启动plugins<br>             startPlugins();<br>         }  else  {<br>             resources.getJobStore().schedulerResumed();<br>         }<br>         schedThread.togglePause( false );<br>         getLog().info(<br>                 “Scheduler “  + resources.getUniqueIdentifier() +  “ started.” );<br>         //通知该调度器的listener启动完成<br>         notifySchedulerListenersStarted();<br>     }<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">##调度过程</span><br><span class="line">调度器启动后,调度器的线程就处于运行状态了,开始执行quartz的主要工作–调度任务.</span><br><span class="line"></span><br><span class="line">前面已介绍过,任务的调度过程大致分为三步:</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>.获取待触发trigger</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.触发trigger</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.实例化并执行Job</span><br><span class="line"></span><br><span class="line">下面分别分析三个阶段的源码.</span><br><span class="line"></span><br><span class="line">QuartzSchedulerThread是调度器线程类,调度过程的三个步骤就承载在<span class="function"><span class="title">run</span><span class="params">()</span></span>方法中,分析见代码注释:</span><br></pre></td></tr></table></figure></p>
+<p>public  void  run() {<br>         boolean  lastAcquireFailed =  false ;<br>         //<br>         while  (!halted.get()) {<br>             try  {<br>                 // check if we’re supposed to pause…<br>                 synchronized  (sigLock) {<br>                     while  (paused &amp;&amp; !halted.get()) {<br>                         try  {<br>                             // wait until togglePause(false) is called…<br>                             sigLock.wait(1000L);<br>                         }  catch  (InterruptedException ignore) {<br>                         }<br>                     }<br>                     if  (halted.get()) {<br>                         break ;<br>                     }<br>                 }<br>                 //获取当前线程池中线程的数量<br>                 int  availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();<br>                 if (availThreadCount &gt;  0 ) {  // will always be true, due to semantics of blockForAvailableThreads…<br>                     List<operabletrigger> triggers =  null ;<br>                     long  now = System.currentTimeMillis();<br>                     clearSignaledSchedulingChange();<br>                     try  {<br>                         //调度器在trigger队列中寻找30秒内一定数目的trigger准备执行调度,<br>                         //参数1:nolaterthan = now+3000ms,参数2 最大获取数量,大小取线程池线程剩余量与定义值得较小者<br>                         //参数3 时间窗口 默认为0,程序会在nolaterthan后加上窗口大小来选择trigger<br>                         triggers = qsRsrcs.getJobStore().acquireNextTriggers(<br>                                 now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());<br>                         //上一步获取成功将失败标志置为false;<br>                         lastAcquireFailed =  false ;<br>                         if  (log.isDebugEnabled())<br>                             log.debug( “batch acquisition of “  + (triggers ==  null  ?  0  : triggers.size()) +  “ triggers” );<br>                     }  catch  (JobPersistenceException jpe) {<br>                         if (!lastAcquireFailed) {<br>                             qs.notifySchedulerListenersError(<br>                                 “An error occurred while scanning for the next triggers to fire.” ,<br>                                 jpe);<br>                         }<br>                         //捕捉到异常则值标志为true,再次尝试获取<br>                         lastAcquireFailed =  true ;<br>                         continue ;<br>                     }  catch  (RuntimeException e) {<br>                         if (!lastAcquireFailed) {<br>                             getLog().error( “quartzSchedulerThreadLoop: RuntimeException “<br>                                     +e.getMessage(), e);<br>                         }<br>                         lastAcquireFailed =  true ;<br>                         continue ;<br>                     }<br>                     if  (triggers !=  null  &amp;&amp; !triggers.isEmpty()) {<br>                         now = System.currentTimeMillis();<br>                         long  triggerTime = triggers.get( 0 ).getNextFireTime().getTime();<br>                         long  timeUntilTrigger = triggerTime - now; //计算距离trigger触发的时间<br>                         while (timeUntilTrigger &gt;  2 ) {<br>                             synchronized  (sigLock) {<br>                                 if  (halted.get()) {<br>                                     break ;<br>                                 }<br>                                 //如果这时调度器发生了改变,新的trigger添加进来,那么有可能新添加的trigger比当前待执行的trigger<br>                                 //更急迫,那么需要放弃当前trigger重新获取,然而,这里存在一个值不值得的问题,如果重新获取新trigger<br>                                 //的时间要长于当前时间到新trigger出发的时间,那么即使放弃当前的trigger,仍然会导致xntrigger获取失败,<br>                                 //但我们又不知道获取新的trigger需要多长时间,于是,我们做了一个主观的评判,若jobstore为RAM,那么<br>                                 //假定获取时间需要7ms,若jobstore是持久化的,假定其需要70ms,当前时间与新trigger的触发时间之差小于<br>                                 // 这个值的我们认为不值得重新获取,返回false<br>                                 //这里判断是否有上述情况发生,值不值得放弃本次trigger,若判定不放弃,则线程直接等待至trigger触发的时刻<br>                                 if  (!isCandidateNewTimeEarlierWithinReason(triggerTime,  false )) {<br>                                     try  {<br>                                         // we could have blocked a long while<br>                                         // on ‘synchronize’, so we must recompute<br>                                         now = System.currentTimeMillis();<br>                                         timeUntilTrigger = triggerTime - now;<br>                                         if (timeUntilTrigger &gt;=  1 )<br>                                             sigLock.wait(timeUntilTrigger);<br>                                     }  catch  (InterruptedException ignore) {<br>                                     }<br>                                 }<br>                             }<br>                             //该方法调用了上面的判定方法,作为再次判定的逻辑<br>                             //到达这里有两种情况1.决定放弃当前trigger,那么再判定一次,如果仍然有放弃,那么清空triggers列表并<br>                             // 退出循环 2.不放弃当前trigger,且线程已经wait到trigger触发的时刻,那么什么也不做<br>                             if (releaseIfScheduleChangedSignificantly(triggers, triggerTime)) {<br>                                 break ;<br>                             }<br>                             now = System.currentTimeMillis();<br>                             timeUntilTrigger = triggerTime - now;<br>                             //这时触发器已经即将触发,值会<2 }="" this="" happens="" if="" releaseifschedulechangedsignificantly="" decided="" to="" release="" triggers="" (triggers.isempty())="" continue="" ;="" set="" 'executing'="" list<triggerfiredresult=""> bndles =  new  ArrayList<triggerfiredresult>();<br>                         boolean  goAhead =  true ;<br>                         synchronized (sigLock) {<br>                             goAhead = !halted.get();<br>                         }<br>                         if (goAhead) {<br>                             try  {<br>                                 //触发triggers,结果付给bndles,注意,从这里返回后,trigger在数据库中已经经过了锁定,解除锁定,这一套过程<br>                                 //所以说,quratz定不是等到job执行完才释放trigger资源的占有,而是读取完本次触发所需的信息后立即释放资源<br>                                 //然后再执行jobs<br>                                 List<triggerfiredresult> res = qsRsrcs.getJobStore().triggersFired(triggers);<br>                                 if (res !=  null )<br>                                     bndles = res;<br>                             }  catch  (SchedulerException se) {<br>                                 qs.notifySchedulerListenersError(<br>                                         “An error occurred while firing triggers ‘“</triggerfiredresult></triggerfiredresult></2></operabletrigger></p>
+<pre><code>                                            + triggers +  <span class="string">"'"</span> , se);
+                            <span class="comment">//QTZ-179 : a problem occurred interacting with the triggers from the db</span>
+                            <span class="comment">//we release them and loop again</span>
+                            <span class="keyword">for</span>  ( <span class="built_in">int</span>  i =  <span class="number">0</span> ; i &lt; triggers.<span class="built_in">size</span>(); i++) {
+                                qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.<span class="built_in">get</span>(i));
+                            }
+                            <span class="keyword">continue</span> ;
+                        }
+                    }
+                    <span class="comment">//迭代trigger的信息,分别跑job</span>
+                    <span class="keyword">for</span>  ( <span class="built_in">int</span>  i =  <span class="number">0</span> ; i &lt; bndles.<span class="built_in">size</span>(); i++) {
+                        TriggerFiredResult result =  bndles.<span class="built_in">get</span>(i);
+                        TriggerFiredBundle bndle =  result.getTriggerFiredBundle();
+                        Exception exception = result.getException();
+                        <span class="keyword">if</span>  (exception  <span class="keyword">instanceof</span>  RuntimeException) {
+                            getLog().error( <span class="string">"RuntimeException while firing trigger "</span>  + triggers.<span class="built_in">get</span>(i), exception);
+                            qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.<span class="built_in">get</span>(i));
+                            <span class="keyword">continue</span> ;
+                        }
+                        <span class="comment">// it's possible to get 'null' if the triggers was paused,</span>
+                        <span class="comment">// blocked, or other similar occurrences that prevent it being</span>
+                        <span class="comment">// fired at this time...  or if the scheduler was shutdown (halted)</span>
+                        <span class="comment">//在特殊情况下,bndle可能为null,看triggerFired方法可以看到,当从数据库获取trigger时,如果status不是</span>
+                        <span class="comment">//STATE_ACQUIRED,那么会直接返回空.quratz这种情况下本调度器启动重试流程,重新获取4次,若仍有问题,</span>
+                        <span class="comment">// 则抛出异常.</span>
+                        <span class="keyword">if</span>  (bndle ==  <span class="keyword">null</span> ) {
+                            qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.<span class="built_in">get</span>(i));
+                            <span class="keyword">continue</span> ;
+                        }
+                        <span class="comment">//执行job</span>
+                        JobRunShell shell =  <span class="keyword">null</span> ;
+                        <span class="keyword">try</span>  {
+                            <span class="comment">//创建一个job的Runshell</span>
+                            shell = qsRsrcs.getJobRunShellFactory().createJobRunShell(bndle);
+                            shell.initialize(qs);
+                        }  <span class="keyword">catch</span>  (SchedulerException se) {
+                            qsRsrcs.getJobStore().triggeredJobComplete(triggers.<span class="built_in">get</span>(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
+                            <span class="keyword">continue</span> ;
+                        }
+                        <span class="comment">//把runShell放在线程池里跑</span>
+                        <span class="keyword">if</span>  (qsRsrcs.getThreadPool().runInThread(shell) ==  <span class="keyword">false</span> ) {
+                            <span class="comment">// this case should never happen, as it is indicative of the</span>
+                            <span class="comment">// scheduler being shutdown or a bug in the thread pool or</span>
+                            <span class="comment">// a thread pool being used concurrently - which the docs</span>
+                            <span class="comment">// say not to do...</span>
+                            getLog().error( <span class="string">"ThreadPool.runInThread() return false!"</span> );
+                            qsRsrcs.getJobStore().triggeredJobComplete(triggers.<span class="built_in">get</span>(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
+                        }
+                    }
+                    <span class="keyword">continue</span> ;  <span class="comment">// while (!halted)</span>
+                }
+            }  <span class="keyword">else</span>  {  <span class="comment">// if(availThreadCount &gt; 0)</span>
+                <span class="comment">// should never happen, if threadPool.blockForAvailableThreads() follows contract</span>
+                <span class="keyword">continue</span> ;  <span class="comment">// while (!halted)</span>
+            }
+            <span class="comment">//保证负载平衡的方法,每次执行一轮触发后,本scheduler会等待一个随机的时间,这样就使得其他节点上的scheduler可以得到资源.</span>
+            <span class="keyword">long</span>  now = System.currentTimeMillis();
+            <span class="keyword">long</span>  waitTime = now + getRandomizedIdleWaitTime();
+            <span class="keyword">long</span>  timeUntilContinue = waitTime - now;
+            <span class="keyword">synchronized</span> (sigLock) {
+                <span class="keyword">try</span>  {
+                  <span class="keyword">if</span> (!halted.<span class="built_in">get</span>()) {
+                    <span class="comment">// QTZ-336 A job might have been completed in the mean time and we might have</span>
+                    <span class="comment">// missed the scheduled changed signal by not waiting for the notify() yet</span>
+                    <span class="comment">// Check that before waiting for too long in case this very job needs to be</span>
+                    <span class="comment">// scheduled very soon</span>
+                    <span class="keyword">if</span>  (!isScheduleChanged()) {
+                      sigLock.wait(timeUntilContinue);
+                    }
+                  }
+                }  <span class="keyword">catch</span>  (InterruptedException ignore) {
+                }
+            }
+        }  <span class="keyword">catch</span> (RuntimeException re) {
+            getLog().error( <span class="string">"Runtime error occurred in main trigger firing loop."</span> , re);
+        }
+    }  <span class="comment">// while (!halted)</span>
+    <span class="comment">// drop references to scheduler stuff to aid garbage collection...</span>
+    qs =  <span class="keyword">null</span> ;
+    qsRsrcs =  <span class="keyword">null</span> ;
+}
+</code></pre><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">调度器每次获取到的trigger是30s内需要执行的,所以要等待一段时间至trigger执行前2ms.在等待过程中涉及到一个新加进来更紧急的trigger的处理逻辑.分析写在注释中,不再赘述.</span><br><span class="line"></span><br><span class="line">可以看到调度器的只要在运行状态,就会不停地执行调度流程.值得注意的是,在流程的最后线程会等待一个随机的时间.这就是quartz自带的负载平衡机制.</span><br><span class="line"></span><br><span class="line">以下是三个步骤的跟进<span class="value">:</span><br><span class="line"></span><br><span class="line">###触发器的获取</span><br><span class="line">调度器调用:</span><br><span class="line">triggers = qsRsrcs.<span class="function">getJobStore</span>().<span class="function">acquireNextTriggers</span>(</span><br><span class="line">now + idleWaitTime, Math.<span class="function">min</span>(availThreadCount, qsRsrcs.<span class="function">getMaxBatchSize</span>()), qsRsrcs.<span class="function">getBatchTimeWindow</span>());</span></span><br><span class="line">在数据库中查找一定时间范围内将会被触发的trigger.参数的意义如下<span class="value">:参数<span class="number">1</span>:nolaterthan = now+<span class="number">3000ms</span>,即未来<span class="number">30s</span>内将会被触发.参数<span class="number">2</span> 最大获取数量,大小取线程池线程剩余量与定义值得较小者.参数<span class="number">3</span> 时间窗口 默认为<span class="number">0</span>,程序会在nolaterthan后加上窗口大小来选择trigger.quratz会在每次触发trigger后计算出trigger下次要执行的时间,并在数据库QRTZ2_TRIGGERS中的NEXT_FIRE_TIME字段中记录.查找时将当前毫秒数与该字段比较,就能找出下一段时间内将会触发的触发器.查找时,调用在JobStoreSupport类中的方法:</span></span><br></pre></td></tr></table></figure>
+<p>public  List<operabletrigger> acquireNextTriggers( final  long  noLaterThan,  final  int  maxCount,  final  long  timeWindow)<br>         throws  JobPersistenceException {</operabletrigger></p>
+<pre><code>    <span class="built_in">String</span> lockName;
+    <span class="keyword">if</span> (isAcquireTriggersWithinLock() <span class="subst">||</span> maxCount <span class="subst">&gt;</span>  <span class="number">1</span> ) {
+        lockName <span class="subst">=</span> LOCK_TRIGGER_ACCESS;
+    }  <span class="keyword">else</span>  {
+        lockName <span class="subst">=</span>  <span class="built_in">null</span> ;
+    }
+    <span class="keyword">return</span>  executeInNonManagedTXLock(lockName,
+            <span class="literal">new</span>  TransactionCallback<span class="subst">&lt;</span><span class="built_in">List</span><span class="subst">&lt;</span>OperableTrigger<span class="subst">&gt;&gt;</span>() {
+                <span class="keyword">public</span>  <span class="built_in">List</span><span class="subst">&lt;</span>OperableTrigger<span class="subst">&gt;</span> execute(Connection conn)  throws  JobPersistenceException {
+                    <span class="keyword">return</span>  acquireNextTrigger(conn, noLaterThan, maxCount, timeWindow);
+                }
+            },
+            <span class="literal">new</span>  TransactionValidator<span class="subst">&lt;</span><span class="built_in">List</span><span class="subst">&lt;</span>OperableTrigger<span class="subst">&gt;&gt;</span>() {
+                <span class="keyword">public</span>  <span class="built_in">Boolean</span> validate(Connection conn, <span class="built_in">List</span><span class="subst">&lt;</span>OperableTrigger<span class="subst">&gt;</span> result)  throws  JobPersistenceException {
+                    <span class="comment">//...异常处理回调方法</span>
+                }
+            });
+}
+</code></pre><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">该方法关键的一点在于执行了executeInNonManagedTXLock()方法,这一方法指定了一个锁名,两个回调函数.在开始执行时获得锁,在方法执行完毕后随着事务的提交锁被释放.在该方法的底层,使用 <span class="keyword">for</span> update语句,在数据库中加入行级锁,保证了在该方法执行过程中,其他的调度器对trigger进行获取时将会等待该调度器释放该锁.此方法是前面介绍的quartz集群策略的的具体实现,这一模板方法在后面的trigger触发过程还会被使用.</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">final</span>  String SELECT_FOR_LOCK =  <span class="string">"SELECT * FROM "</span></span><br><span class="line">             + TABLE_PREFIX_SUBST + TABLE_LOCKS +  <span class="string">" WHERE "</span>  + COL_SCHEDULER_NAME +  <span class="string">" = "</span>  + SCHED_NAME_SUBST</span><br><span class="line">             +  <span class="string">" AND "</span>  + COL_LOCK_NAME +  <span class="string">" = ? FOR UPDATE"</span> ;</span><br><span class="line">进一步解释:quratz在获取数据库资源之前,先要以<span class="keyword">for</span> update方式访问LOCKS表中相应LOCK_NAME数据将改行锁定.如果在此前该行已经被锁定,那么等待,如果没有被锁定,那么读取满足要求的trigger,并把它们的status置为STATE_ACQUIRED,如果有tirgger已被置为STATE_ACQUIRED,那么说明该trigger已被别的调度器实例认领,无需再次认领,调度器会忽略此trigger.调度器实例之间的间接通信就体现在这里.</span><br><span class="line"></span><br><span class="line">JobStoreSupport.acquireNextTrigger()方法中:</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> rowsUpdated = getDelegate().updateTriggerStateFromOtherState(conn, triggerKey, STATE_ACQUIRED, STATE_WAITING);</span><br><span class="line"></span><br><span class="line">最后释放锁,这时如果下一个调度器在排队获取trigger的话,则仍会执行相同的步骤.这种机制保证了trigger不会被重复获取.按照这种算法正常运行状态下调度器每次读取的trigger中会有相当一部分已被标记为被获取.</span><br><span class="line"></span><br><span class="line">获取trigger的过程进行完毕.</span><br><span class="line"></span><br><span class="line">###触发trigger:</span><br><span class="line">QuartzSchedulerThread line336:</span><br><span class="line"></span><br><span class="line">List&lt;TriggerFiredResult&gt; res = qsRsrcs.getJobStore().triggersFired(triggers);</span><br><span class="line"></span><br><span class="line">调用JobStoreSupport类的triggersFired()方法:</span><br></pre></td></tr></table></figure>
+<p>public  List<triggerfiredresult> triggersFired( final  List<operabletrigger> triggers)  throws  JobPersistenceException {<br>         return  executeInNonManagedTXLock(LOCK_TRIGGER_ACCESS,<br>                 new  TransactionCallback<list<triggerfiredresult>&gt;() {<br>                     public  List<triggerfiredresult> execute(Connection conn)  throws  JobPersistenceException {<br>                         List<triggerfiredresult> results =  new  ArrayList<triggerfiredresult>();<br>                         TriggerFiredResult result;<br>                         for  (OperableTrigger trigger : triggers) {<br>                             try  {<br>                               TriggerFiredBundle bundle = triggerFired(conn, trigger);<br>                               result =  new  TriggerFiredResult(bundle);<br>                             }  catch  (JobPersistenceException jpe) {<br>                                 result =  new  TriggerFiredResult(jpe);<br>                             }  catch (RuntimeException re) {<br>                                 result =  new  TriggerFiredResult(re);<br>                             }<br>                             results.add(result);<br>                         }<br>                         return  results;<br>                     }<br>                 },<br>                 new  TransactionValidator<list<triggerfiredresult>&gt;() {<br>                     @Override<br>                     public  Boolean validate(Connection conn, List<triggerfiredresult> result)  throws  JobPersistenceException {<br>                         //…异常处理回调方法<br>                     }<br>                 });<br>     }<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此处再次用到了quratz的行为规范:<span class="function"><span class="title">executeInNonManagedTXLock</span><span class="params">()</span></span>方法,在获取锁的情况下对trigger进行触发操作.其中的触发细节如下:</span><br></pre></td></tr></table></figure></triggerfiredresult></list<triggerfiredresult></triggerfiredresult></triggerfiredresult></triggerfiredresult></list<triggerfiredresult></operabletrigger></triggerfiredresult></p>
+<p>protected  TriggerFiredBundle triggerFired(Connection conn,<br>             OperableTrigger trigger)<br>         throws  JobPersistenceException {<br>         JobDetail job;<br>         Calendar cal =  null ;<br>         // Make sure trigger wasn’t deleted, paused, or completed…<br>         try  {  // if trigger was deleted, state will be STATE_DELETED<br>             String state = getDelegate().selectTriggerState(conn,<br>                     trigger.getKey());<br>             if  (!state.equals(STATE_ACQUIRED)) {<br>                 return  null ;<br>             }<br>         }  catch  (SQLException e) {<br>             throw  new  JobPersistenceException( “Couldn’t select trigger state: “</p>
+<pre><code>                + e.getMessage(), e);
+    }
+    <span class="keyword">try</span>  {
+        job = retrieveJob(conn, trigger.getJobKey());
+        <span class="keyword">if</span>  (job ==  <span class="literal">null</span> ) {  <span class="keyword">return</span>  <span class="literal">null</span> ; }
+    }  <span class="keyword">catch</span>  (JobPersistenceException jpe) {
+        <span class="keyword">try</span>  {
+            getLog().error( <span class="string">"Error retrieving job, setting trigger state to ERROR."</span> , jpe);
+            getDelegate().updateTriggerState(conn, trigger.getKey(),
+                    STATE_ERROR);
+        }  <span class="keyword">catch</span>  (SQLException sqle) {
+            getLog().error( <span class="string">"Unable to set trigger state to ERROR."</span> , sqle);
+        }
+        <span class="keyword">throw</span>  jpe;
+    }
+    <span class="keyword">if</span>  (trigger.getCalendarName() !=  <span class="literal">null</span> ) {
+        cal = retrieveCalendar(conn, trigger.getCalendarName());
+        <span class="keyword">if</span>  (cal ==  <span class="literal">null</span> ) {  <span class="keyword">return</span>  <span class="literal">null</span> ; }
+    }
+    <span class="keyword">try</span>  {
+        getDelegate().updateFiredTrigger(conn, trigger, STATE_EXECUTING, job);
+    }  <span class="keyword">catch</span>  (SQLException e) {
+        <span class="keyword">throw</span>  <span class="keyword">new</span>  JobPersistenceException( <span class="string">"Couldn't insert fired trigger: "</span>
+                + e.getMessage(), e);
+    }
+    <span class="built_in">Date</span> prevFireTime = trigger.getPreviousFireTime();
+    <span class="comment">// call triggered - to update the trigger's next-fire-time state...</span>
+    trigger.triggered(cal);
+    <span class="built_in">String</span> state = STATE_WAITING;
+    <span class="built_in">boolean</span>  force =  <span class="literal">true</span> ;
 
-             <span class="keyword">if</span>  (getUseDBLocks()) {
-                 <span class="keyword">if</span> (getDriverDelegateClass() !=  null  &amp;&amp; getDriverDelegateClass().equals(MSSQLDelegate. class .getName())) {
-                     <span class="keyword">if</span> (getSelectWithLockSQL() ==  null ) {
-                         //读取数据库LOCKS表中对应当前调度器的锁信息
-                         String msSqlDflt =  <span class="string">"SELECT * FROM {0}LOCKS WITH (UPDLOCK,ROWLOCK) WHERE "</span>  + COL_SCHEDULER_NAME +  <span class="string">" = {1} AND LOCK_NAME = ?"</span> ;
-                         getLog().info( <span class="string">"Detected usage of MSSQLDelegate class - defaulting 'selectWithLockSQL' to '"</span>  + msSqlDflt +  <span class="string">"'."</span> );
-                         <span class="built_in">set</span>SelectWithLockSQL(msSqlDflt);
-                     }
-                 }
-                 getLog().info( <span class="string">"Using db table-based data access locking (synchronization)."</span> );
-                 <span class="built_in">set</span>LockHandler( new  StdRowLockSemaphore(getTablePrefix(), getInstanceName(), getSelectWithLockSQL()));
-             }  <span class="keyword">else</span>  {
-                 getLog().info(
-                     <span class="string">"Using thread monitor-based data access locking (synchronization)."</span> );
-                 <span class="built_in">set</span>LockHandler( new  SimpleSemaphore());
-             }
-         }
-     }
-</code></pre>
-<p>当调用sch.start();方法时,scheduler做了如下工作:</p>
-<p>1.通知listener开始启动</p>
-<p>2.启动调度器线程</p>
-<p>3.启动plugin</p>
-<p>4.通知listener启动完成</p>
-<pre><code class="bash">public  void  start()  throws  SchedulerException {
-         <span class="keyword">if</span>  (shuttingDown|| closed) {
-             throw  new  SchedulerException(
-                     <span class="string">"The Scheduler cannot be restarted after shutdown() has been called."</span> );
-         }
-         // QTZ-<span class="number">212</span> : calling new schedulerStarting() method on the listeners
-         // right after entering start()
-         //通知该调度器的listener启动开始
-         notifySchedulerListenersStarting();
-         <span class="keyword">if</span>  (initialStart ==  null ) {
-             initialStart =  new  Date();
-             //启动调度器的线程
-             this .resources.getJobStore().schedulerStarted();            
-             //启动plugins
-             startPlugins();
-         }  <span class="keyword">else</span>  {
-             resources.getJobStore().schedulerResumed();
-         }
-         <span class="built_in">sched</span>Thread.togglePause( <span class="literal">false</span> );
-         getLog().info(
-                 <span class="string">"Scheduler "</span>  + resources.getUniqueIdentifier() +  <span class="string">" started."</span> );
-         //通知该调度器的listener启动完成
-         notifySchedulerListenersStarted();
-     }
-</code></pre>
-<h2 id="调度过程">调度过程</h2><p>调度器启动后,调度器的线程就处于运行状态了,开始执行quartz的主要工作–调度任务.</p>
-<p>前面已介绍过,任务的调度过程大致分为三步:</p>
-<p>1.获取待触发trigger</p>
-<p>2.触发trigger</p>
-<p>3.实例化并执行Job</p>
-<p>下面分别分析三个阶段的源码.</p>
-<p>QuartzSchedulerThread是调度器线程类,调度过程的三个步骤就承载在run()方法中,分析见代码注释:</p>
-<pre><code class="bash">public  void  <span class="function"><span class="title">run</span></span>() {
-         boolean  lastAcquireFailed =  <span class="literal">false</span> ;
-         //
-         <span class="keyword">while</span>  (!halted.get()) {
-             try  {
-                 // check <span class="keyword">if</span> we<span class="string">'re supposed to pause...
-                 synchronized  (sigLock) {
-                     while  (paused &amp;&amp; !halted.get()) {
-                         try  {
-                             // wait until togglePause(false) is called...
-                             sigLock.wait(1000L);
-                         }  catch  (InterruptedException ignore) {
-                         }
-                     }
-                     if  (halted.get()) {
-                         break ;
-                     }
-                 }
-                 //获取当前线程池中线程的数量
-                 int  availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
-                 if (availThreadCount &gt;  0 ) {  // will always be true, due to semantics of blockForAvailableThreads...
-                     List&lt;OperableTrigger&gt; triggers =  null ;
-                     long  now = System.currentTimeMillis();
-                     clearSignaledSchedulingChange();
-                     try  {
-                         //调度器在trigger队列中寻找30秒内一定数目的trigger准备执行调度,
-                         //参数1:nolaterthan = now+3000ms,参数2 最大获取数量,大小取线程池线程剩余量与定义值得较小者
-                         //参数3 时间窗口 默认为0,程序会在nolaterthan后加上窗口大小来选择trigger
-                         triggers = qsRsrcs.getJobStore().acquireNextTriggers(
-                                 now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());
-                         //上一步获取成功将失败标志置为false;
-                         lastAcquireFailed =  false ;
-                         if  (log.isDebugEnabled())
-                             log.debug( "batch acquisition of "  + (triggers ==  null  ?  0  : triggers.size()) +  " triggers" );
-                     }  catch  (JobPersistenceException jpe) {
-                         if (!lastAcquireFailed) {
-                             qs.notifySchedulerListenersError(
-                                 "An error occurred while scanning for the next triggers to fire." ,
-                                 jpe);
-                         }
-                         //捕捉到异常则值标志为true,再次尝试获取
-                         lastAcquireFailed =  true ;
-                         continue ;
-                     }  catch  (RuntimeException e) {
-                         if (!lastAcquireFailed) {
-                             getLog().error( "quartzSchedulerThreadLoop: RuntimeException "
-                                     +e.getMessage(), e);
-                         }
-                         lastAcquireFailed =  true ;
-                         continue ;
-                     }
-                     if  (triggers !=  null  &amp;&amp; !triggers.isEmpty()) {
-                         now = System.currentTimeMillis();
-                         long  triggerTime = triggers.get( 0 ).getNextFireTime().getTime();
-                         long  timeUntilTrigger = triggerTime - now; //计算距离trigger触发的时间
-                         while (timeUntilTrigger &gt;  2 ) {
-                             synchronized  (sigLock) {
-                                 if  (halted.get()) {
-                                     break ;
-                                 }
-                                 //如果这时调度器发生了改变,新的trigger添加进来,那么有可能新添加的trigger比当前待执行的trigger
-                                 //更急迫,那么需要放弃当前trigger重新获取,然而,这里存在一个值不值得的问题,如果重新获取新trigger
-                                 //的时间要长于当前时间到新trigger出发的时间,那么即使放弃当前的trigger,仍然会导致xntrigger获取失败,
-                                 //但我们又不知道获取新的trigger需要多长时间,于是,我们做了一个主观的评判,若jobstore为RAM,那么
-                                 //假定获取时间需要7ms,若jobstore是持久化的,假定其需要70ms,当前时间与新trigger的触发时间之差小于
-                                 // 这个值的我们认为不值得重新获取,返回false
-                                 //这里判断是否有上述情况发生,值不值得放弃本次trigger,若判定不放弃,则线程直接等待至trigger触发的时刻
-                                 if  (!isCandidateNewTimeEarlierWithinReason(triggerTime,  false )) {
-                                     try  {
-                                         // we could have blocked a long while
-                                         // on '</span>synchronize<span class="string">', so we must recompute
-                                         now = System.currentTimeMillis();
-                                         timeUntilTrigger = triggerTime - now;
-                                         if (timeUntilTrigger &gt;=  1 )
-                                             sigLock.wait(timeUntilTrigger);
-                                     }  catch  (InterruptedException ignore) {
-                                     }
-                                 }
-                             }
-                             //该方法调用了上面的判定方法,作为再次判定的逻辑
-                             //到达这里有两种情况1.决定放弃当前trigger,那么再判定一次,如果仍然有放弃,那么清空triggers列表并
-                             // 退出循环 2.不放弃当前trigger,且线程已经wait到trigger触发的时刻,那么什么也不做
-                             if (releaseIfScheduleChangedSignificantly(triggers, triggerTime)) {
-                                 break ;
-                             }
-                             now = System.currentTimeMillis();
-                             timeUntilTrigger = triggerTime - now;
-                             //这时触发器已经即将触发,值会&lt;2
-                         }
-                         // this happens if releaseIfScheduleChangedSignificantly decided to release triggers
-                         if (triggers.isEmpty())
-                             continue ;
-                         // set triggers to '</span>executing<span class="string">'
-                         List&lt;TriggerFiredResult&gt; bndles =  new  ArrayList&lt;TriggerFiredResult&gt;();
-                         boolean  goAhead =  true ;
-                         synchronized (sigLock) {
-                             goAhead = !halted.get();
-                         }
-                         if (goAhead) {
-                             try  {
-                                 //触发triggers,结果付给bndles,注意,从这里返回后,trigger在数据库中已经经过了锁定,解除锁定,这一套过程
-                                 //所以说,quratz定不是等到job执行完才释放trigger资源的占有,而是读取完本次触发所需的信息后立即释放资源
-                                 //然后再执行jobs
-                                 List&lt;TriggerFiredResult&gt; res = qsRsrcs.getJobStore().triggersFired(triggers);
-                                 if (res !=  null )
-                                     bndles = res;
-                             }  catch  (SchedulerException se) {
-                                 qs.notifySchedulerListenersError(
-                                         "An error occurred while firing triggers '</span><span class="string">"
-                                                 + triggers +  "</span><span class="string">'" , se);
-                                 //QTZ-179 : a problem occurred interacting with the triggers from the db
-                                 //we release them and loop again
-                                 for  ( int  i =  0 ; i &lt; triggers.size(); i++) {
-                                     qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
-                                 }
-                                 continue ;
-                             }
-                         }
-                         //迭代trigger的信息,分别跑job
-                         for  ( int  i =  0 ; i &lt; bndles.size(); i++) {
-                             TriggerFiredResult result =  bndles.get(i);
-                             TriggerFiredBundle bndle =  result.getTriggerFiredBundle();
-                             Exception exception = result.getException();
-                             if  (exception  instanceof  RuntimeException) {
-                                 getLog().error( "RuntimeException while firing trigger "  + triggers.get(i), exception);
-                                 qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
-                                 continue ;
-                             }
-                             // it'</span>s possible to get <span class="string">'null'</span> <span class="keyword">if</span> the triggers was paused,
-                             // blocked, or other similar occurrences that prevent it being
-                             // fired at this time...  or <span class="keyword">if</span> the scheduler was shutdown (halted)
-                             //在特殊情况下,bndle可能为null,看triggerFired方法可以看到,当从数据库获取trigger时,如果status不是
-                             //STATE_ACQUIRED,那么会直接返回空.quratz这种情况下本调度器启动重试流程,重新获取<span class="number">4</span>次,若仍有问题,
-                             // 则抛出异常.
-                             <span class="keyword">if</span>  (bndle ==  null ) {
-                                 qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
-                                 <span class="built_in">continue</span> ;
-                             }
-                             //执行job
-                             JobRunShell shell =  null ;
-                             try  {
-                                 //创建一个job的Runshell
-                                 shell = qsRsrcs.getJobRunShellFactory().createJobRunShell(bndle);
-                                 shell.initialize(qs);
-                             }  catch  (SchedulerException se) {
-                                 qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
-                                 <span class="built_in">continue</span> ;
-                             }
-                             //把runShell放在线程池里跑
-                             <span class="keyword">if</span>  (qsRsrcs.getThreadPool().runInThread(shell) ==  <span class="literal">false</span> ) {
-                                 // this <span class="keyword">case</span> should never happen, as it is indicative of the
-                                 // scheduler being shutdown or a bug <span class="keyword">in</span> the thread pool or
-                                 // a thread pool being used concurrently - <span class="built_in">which</span> the docs
-                                 // say not to do...
-                                 getLog().error( <span class="string">"ThreadPool.runInThread() return false!"</span> );
-                                 qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
-                             }
-                         }
-                         <span class="built_in">continue</span> ;  // <span class="keyword">while</span> (!halted)
-                     }
-                 }  <span class="keyword">else</span>  {  // <span class="keyword">if</span>(availThreadCount &gt; <span class="number">0</span>)
-                     // should never happen, <span class="keyword">if</span> threadPool.blockForAvailableThreads() follows contract
-                     <span class="built_in">continue</span> ;  // <span class="keyword">while</span> (!halted)
-                 }
-                 //保证负载平衡的方法,每次执行一轮触发后,本scheduler会等待一个随机的时间,这样就使得其他节点上的scheduler可以得到资源.
-                 long  now = System.currentTimeMillis();
-                 long  <span class="built_in">wait</span>Time = now + getRandomizedIdleWaitTime();
-                 long  timeUntilContinue = <span class="built_in">wait</span>Time - now;
-                 synchronized (sigLock) {
-                     try  {
-                       <span class="keyword">if</span> (!halted.get()) {
-                         // QTZ-<span class="number">336</span> A job might have been completed <span class="keyword">in</span> the mean time and we might have
-                         // missed the scheduled changed signal by not waiting <span class="keyword">for</span> the notify() yet
-                         // Check that before waiting <span class="keyword">for</span> too long <span class="keyword">in</span> <span class="keyword">case</span> this very job needs to be
-                         // scheduled very soon
-                         <span class="keyword">if</span>  (!isScheduleChanged()) {
-                           sigLock.wait(timeUntilContinue);
-                         }
-                       }
-                     }  catch  (InterruptedException ignore) {
-                     }
-                 }
-             }  catch (RuntimeException re) {
-                 getLog().error( <span class="string">"Runtime error occurred in main trigger firing loop."</span> , re);
-             }
-         }  // <span class="keyword">while</span> (!halted)
-         // drop references to scheduler stuff to aid garbage collection...
-         qs =  null ;
-         qsRsrcs =  null ;
-     }
-</code></pre>
-<p>调度器每次获取到的trigger是30s内需要执行的,所以要等待一段时间至trigger执行前2ms.在等待过程中涉及到一个新加进来更紧急的trigger的处理逻辑.分析写在注释中,不再赘述.</p>
-<p>可以看到调度器的只要在运行状态,就会不停地执行调度流程.值得注意的是,在流程的最后线程会等待一个随机的时间.这就是quartz自带的负载平衡机制.</p>
-<p>以下是三个步骤的跟进:</p>
-<h3 id="触发器的获取">触发器的获取</h3><p>调度器调用:<br>triggers = qsRsrcs.getJobStore().acquireNextTriggers(<br>now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());<br>在数据库中查找一定时间范围内将会被触发的trigger.参数的意义如下:参数1:nolaterthan = now+3000ms,即未来30s内将会被触发.参数2 最大获取数量,大小取线程池线程剩余量与定义值得较小者.参数3 时间窗口 默认为0,程序会在nolaterthan后加上窗口大小来选择trigger.quratz会在每次触发trigger后计算出trigger下次要执行的时间,并在数据库QRTZ2_TRIGGERS中的NEXT_FIRE_TIME字段中记录.查找时将当前毫秒数与该字段比较,就能找出下一段时间内将会触发的触发器.查找时,调用在JobStoreSupport类中的方法:</p>
-<pre><code class="bash">public  List&lt;OperableTrigger&gt; acquireNextTriggers( final  long  noLaterThan,  final  int  maxCount,  final  long  timeWindow)
-         throws  JobPersistenceException {
+    <span class="keyword">if</span>  (job.isConcurrentExectionDisallowed()) {
+        state = STATE_BLOCKED;
+        force =  <span class="literal">false</span> ;
+        <span class="keyword">try</span>  {
+            getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
+                    STATE_BLOCKED, STATE_WAITING);
+            getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
+                    STATE_BLOCKED, STATE_ACQUIRED);
+            getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
+                    STATE_PAUSED_BLOCKED, STATE_PAUSED);
+        }  <span class="keyword">catch</span>  (SQLException e) {
+            <span class="keyword">throw</span>  <span class="keyword">new</span>  JobPersistenceException(
+                    <span class="string">"Couldn't update states of blocked triggers: "</span>
+                            + e.getMessage(), e);
+        }
+    }
 
-         String lockName;
-         <span class="keyword">if</span> (isAcquireTriggersWithinLock() || maxCount &gt;  <span class="number">1</span> ) {
-             lockName = LOCK_TRIGGER_ACCESS;
-         }  <span class="keyword">else</span>  {
-             lockName =  null ;
-         }
-         <span class="built_in">return</span>  executeInNonManagedTXLock(lockName,
-                 new  TransactionCallback&lt;List&lt;OperableTrigger&gt;&gt;() {
-                     public  List&lt;OperableTrigger&gt; execute(Connection conn)  throws  JobPersistenceException {
-                         <span class="built_in">return</span>  acquireNextTrigger(conn, noLaterThan, maxCount, timeWindow);
-                     }
-                 },
-                 new  TransactionValidator&lt;List&lt;OperableTrigger&gt;&gt;() {
-                     public  Boolean validate(Connection conn, List&lt;OperableTrigger&gt; result)  throws  JobPersistenceException {
-                         //...异常处理回调方法
-                     }
-                 });
-     }
-</code></pre>
-<p>该方法关键的一点在于执行了executeInNonManagedTXLock()方法,这一方法指定了一个锁名,两个回调函数.在开始执行时获得锁,在方法执行完毕后随着事务的提交锁被释放.在该方法的底层,使用 for update语句,在数据库中加入行级锁,保证了在该方法执行过程中,其他的调度器对trigger进行获取时将会等待该调度器释放该锁.此方法是前面介绍的quartz集群策略的的具体实现,这一模板方法在后面的trigger触发过程还会被使用.</p>
-<p>public  static  final  String SELECT_FOR_LOCK =  “SELECT * FROM “</p>
-<pre><code>+ TABLE_PREFIX_SUBST + TABLE_LOCKS +  <span class="string">" WHERE "</span>  + COL_SCHEDULER_NAME +  <span class="string">" = "</span>  + SCHED_NAME_SUBST
-+  <span class="string">" AND "</span>  + COL_LOCK_NAME +  <span class="string">" = ? FOR UPDATE"</span> ;
-</code></pre><p>进一步解释:quratz在获取数据库资源之前,先要以for update方式访问LOCKS表中相应LOCK_NAME数据将改行锁定.如果在此前该行已经被锁定,那么等待,如果没有被锁定,那么读取满足要求的trigger,并把它们的status置为STATE_ACQUIRED,如果有tirgger已被置为STATE_ACQUIRED,那么说明该trigger已被别的调度器实例认领,无需再次认领,调度器会忽略此trigger.调度器实例之间的间接通信就体现在这里.</p>
-<p>JobStoreSupport.acquireNextTrigger()方法中:</p>
-<p>int rowsUpdated = getDelegate().updateTriggerStateFromOtherState(conn, triggerKey, STATE_ACQUIRED, STATE_WAITING);</p>
-<p>最后释放锁,这时如果下一个调度器在排队获取trigger的话,则仍会执行相同的步骤.这种机制保证了trigger不会被重复获取.按照这种算法正常运行状态下调度器每次读取的trigger中会有相当一部分已被标记为被获取.</p>
-<p>获取trigger的过程进行完毕.</p>
-<h3 id="触发trigger:">触发trigger:</h3><p>QuartzSchedulerThread line336:</p>
-<p>List<triggerfiredresult> res = qsRsrcs.getJobStore().triggersFired(triggers);</triggerfiredresult></p>
-<p>调用JobStoreSupport类的triggersFired()方法:</p>
-<pre><code class="bash">public  List&lt;TriggerFiredResult&gt; triggersFired( final  List&lt;OperableTrigger&gt; triggers)  throws  JobPersistenceException {
-         <span class="built_in">return</span>  executeInNonManagedTXLock(LOCK_TRIGGER_ACCESS,
-                 new  TransactionCallback&lt;List&lt;TriggerFiredResult&gt;&gt;() {
-                     public  List&lt;TriggerFiredResult&gt; execute(Connection conn)  throws  JobPersistenceException {
-                         List&lt;TriggerFiredResult&gt; results =  new  ArrayList&lt;TriggerFiredResult&gt;();
-                         TriggerFiredResult result;
-                         <span class="keyword">for</span>  (OperableTrigger trigger : triggers) {
-                             try  {
-                               TriggerFiredBundle bundle = triggerFired(conn, trigger);
-                               result =  new  TriggerFiredResult(bundle);
-                             }  catch  (JobPersistenceException jpe) {
-                                 result =  new  TriggerFiredResult(jpe);
-                             }  catch (RuntimeException re) {
-                                 result =  new  TriggerFiredResult(re);
-                             }
-                             results.add(result);
-                         }
-                         <span class="built_in">return</span>  results;
-                     }
-                 },
-                 new  TransactionValidator&lt;List&lt;TriggerFiredResult&gt;&gt;() {
-                     @Override
-                     public  Boolean validate(Connection conn, List&lt;TriggerFiredResult&gt; result)  throws  JobPersistenceException {
-                         //...异常处理回调方法
-                     }
-                 });
-     }
-</code></pre>
-<p>此处再次用到了quratz的行为规范:executeInNonManagedTXLock()方法,在获取锁的情况下对trigger进行触发操作.其中的触发细节如下:</p>
-<pre><code class="bash">protected  TriggerFiredBundle triggerFired(Connection conn,
-             OperableTrigger trigger)
-         throws  JobPersistenceException {
-         JobDetail job;
-         Calendar cal =  null ;
-         // Make sure trigger wasn<span class="string">'t deleted, paused, or completed...
-         try  {  // if trigger was deleted, state will be STATE_DELETED
-             String state = getDelegate().selectTriggerState(conn,
-                     trigger.getKey());
-             if  (!state.equals(STATE_ACQUIRED)) {
-                 return  null ;
-             }
-         }  catch  (SQLException e) {
-             throw  new  JobPersistenceException( "Couldn'</span>t select trigger state: <span class="string">"
-                     + e.getMessage(), e);
-         }
-         try  {
-             job = retrieveJob(conn, trigger.getJobKey());
-             if  (job ==  null ) {  return  null ; }
-         }  catch  (JobPersistenceException jpe) {
-             try  {
-                 getLog().error( "</span>Error retrieving job, setting trigger state to ERROR.<span class="string">" , jpe);
-                 getDelegate().updateTriggerState(conn, trigger.getKey(),
-                         STATE_ERROR);
-             }  catch  (SQLException sqle) {
-                 getLog().error( "</span>Unable to <span class="built_in">set</span> trigger state to ERROR.<span class="string">" , sqle);
-             }
-             throw  jpe;
-         }
-         if  (trigger.getCalendarName() !=  null ) {
-             cal = retrieveCalendar(conn, trigger.getCalendarName());
-             if  (cal ==  null ) {  return  null ; }
-         }
-         try  {
-             getDelegate().updateFiredTrigger(conn, trigger, STATE_EXECUTING, job);
-         }  catch  (SQLException e) {
-             throw  new  JobPersistenceException( "</span>Couldn<span class="string">'t insert fired trigger: "
-                     + e.getMessage(), e);
-         }
-         Date prevFireTime = trigger.getPreviousFireTime();
-         // call triggered - to update the trigger'</span>s next-fire-time state...
-         trigger.triggered(cal);
-         String state = STATE_WAITING;
-         boolean  force =  <span class="literal">true</span> ;
-
-         <span class="keyword">if</span>  (job.isConcurrentExectionDisallowed()) {
-             state = STATE_BLOCKED;
-             force =  <span class="literal">false</span> ;
-             try  {
-                 getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
-                         STATE_BLOCKED, STATE_WAITING);
-                 getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
-                         STATE_BLOCKED, STATE_ACQUIRED);
-                 getDelegate().updateTriggerStatesForJobFromOtherState(conn, job.getKey(),
-                         STATE_PAUSED_BLOCKED, STATE_PAUSED);
-             }  catch  (SQLException e) {
-                 throw  new  JobPersistenceException(
-                         <span class="string">"Couldn't update states of blocked triggers: "</span>
-                                 + e.getMessage(), e);
-             }
-         }
-
-         <span class="keyword">if</span>  (trigger.getNextFireTime() ==  null ) {
-             state = STATE_COMPLETE;
-             force =  <span class="literal">true</span> ;
-         }
-         storeTrigger(conn, trigger, job,  <span class="literal">true</span> , state, force,  <span class="literal">false</span> );
-         job.getJobDataMap().clearDirtyFlag();
-         <span class="built_in">return</span>  new  TriggerFiredBundle(job, trigger, cal, trigger.getKey().getGroup()
-                 .equals(Scheduler.DEFAULT_RECOVERY_GROUP),  new  Date(), trigger
-                 .getPreviousFireTime(), prevFireTime, trigger.getNextFireTime());
-     }
-</code></pre>
-<p>该方法做了以下工作:</p>
-<p>1.获取trigger当前状态</p>
-<p>2.通过trigger中的JobKey读取trigger包含的Job信息</p>
-<p>3.将trigger更新至触发状态</p>
-<p>4.结合calendar的信息触发trigger,涉及多次状态更新</p>
-<p>5.更新数据库中trigger的信息,包括更改状态至STATE_COMPLETE,及计算下一次触发时间.</p>
-<p>6.返回trigger触发结果的数据传输类TriggerFiredBundle</p>
-<p>从该方法返回后,trigger的执行过程已基本完毕.回到执行quratz操作规范的executeInNonManagedTXLock方法,将数据库锁释放.</p>
-<p>trigger触发操作完成</p>
-<h3 id="Job执行过程:">Job执行过程:</h3><p>再回到线程类QuartzSchedulerThread的 line353这时触发器都已出发完毕,job的详细信息都已就位</p>
-<pre><code class="bash">QuartzSchedulerThread line:<span class="number">368</span>
-qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
-shell.initialize(qs);
-</code></pre>
+    <span class="keyword">if</span>  (trigger.getNextFireTime() ==  <span class="literal">null</span> ) {
+        state = STATE_COMPLETE;
+        force =  <span class="literal">true</span> ;
+    }
+    storeTrigger(conn, trigger, job,  <span class="literal">true</span> , state, force,  <span class="literal">false</span> );
+    job.getJobDataMap().clearDirtyFlag();
+    <span class="keyword">return</span>  <span class="keyword">new</span>  TriggerFiredBundle(job, trigger, cal, trigger.getKey().getGroup()
+            .equals(Scheduler.DEFAULT_RECOVERY_GROUP),  <span class="keyword">new</span>  <span class="built_in">Date</span>(), trigger
+            .getPreviousFireTime(), prevFireTime, trigger.getNextFireTime());
+}
+</code></pre><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">该方法做了以下工作:</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>.获取trigger当前状态</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.通过trigger中的<span class="variable">JobKey</span>读取trigger包含的<span class="variable">Job</span>信息</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.将trigger更新至触发状态</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>.结合calendar的信息触发trigger,涉及多次状态更新</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>.更新数据库中trigger的信息,包括更改状态至<span class="variable">STATE_COMPLETE</span>,及计算下一次触发时间.</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>.返回trigger触发结果的数据传输类<span class="variable">TriggerFiredBundle</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">从该方法返回后,trigger的执行过程已基本完毕.回到执行quratz操作规范的execute<span class="variable">InNonManagedTXLock</span>方法,将数据库锁释放.</span><br><span class="line"></span><br><span class="line">trigger触发操作完成</span><br><span class="line"></span><br><span class="line">##<span class="record_name">#Job</span>执行过程:</span><br><span class="line">再回到线程类<span class="variable">QuartzSchedulerThread</span>的 line353这时触发器都已出发完毕,job的详细信息都已就位</span><br></pre></td></tr></table></figure>
+<p>QuartzSchedulerThread line:368<br>qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));<br>shell.initialize(qs);<br>``` </p>
 <p>为每个Job生成一个可运行的RunShell,并放入线程池运行.</p>
 <p>在最后调度线程生成了一个随机的等待时间,进入短暂的等待,这使得其他节点的调度器都有机会获取数据库资源.如此就实现了quratz的负载平衡.</p>
 <p>这样一次完整的调度过程就结束了.调度器线程进入下一次循环.、</p>
@@ -618,7 +367,7 @@ shell.initialize(qs);
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#调度过程"><span class="toc-number">1.</span> <span class="toc-text">调度过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#触发器的获取"><span class="toc-number">1.1.</span> <span class="toc-text">触发器的获取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#触发trigger:"><span class="toc-number">1.2.</span> <span class="toc-text">触发trigger:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Job执行过程:"><span class="toc-number">1.3.</span> <span class="toc-text">Job执行过程:</span></a></li></ol></li></ol>
+ 
  
   </div>
 
