@@ -161,7 +161,9 @@
 </header>
     <div class="article-content">
         
-        <p>最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去，经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库顺序并不保持一致，Oracle是如此，mysql呢？mysql设置自增主键是否也是这种情况，于是做了个测试</p>
+        <p>最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去；</p>
+<p>经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库顺序并不保持一致；</p>
+<p>Oracle是如此，mysql呢？mysql设置自增主键是否也是这种情况，于是做了个测试</p>
 <p>在mysql建一张表，设置自增主键<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE TEST_ZC (   </span><br><span class="line">    ID NUMBER(<span class="number">19</span>,<span class="number">0</span>) NOT NULL AUTO_INCREMENT, </span><br><span class="line">    TIME TIMESTAMP NULL DEFAULT NULL,  </span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
 <p>然后应用程序，比较主键和时间</p>
 <p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/sequence.png"><br>可有看到时间和序列之间并不一致，即Oracle中sequence和MySQL自增主键一样，和数据持久化入库时间并不具有一致性</p>
