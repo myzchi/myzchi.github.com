@@ -4,29 +4,23 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>hexo+github搭建过程总结 | ZhangChi&#39;s Blog</title>
+    <title>序列sequence生成顺序与应用数据持久化入库顺序的一致性 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="ZhangChi">
     
 
     
-    <meta name="description" content="折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→
-git客户端git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错
-12$ hexosh.exe&quot;:">
+    <meta name="description" content="最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去，经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hexo+github搭建过程总结">
-<meta property="og:url" content="http://yoursite.com/2015/05/02/hexo-github搭建过程总结/index.html">
+<meta property="og:title" content="序列sequence生成顺序与应用数据持久化入库顺序的一致性">
+<meta property="og:url" content="http://yoursite.com/2016/10/24/sequence生成顺序与应用数据持久化入库顺序的一致性/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→
-git客户端git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错
-12$ hexosh.exe&quot;:">
-<meta property="og:image" content="http://img.ask.csdn.net/upload/201505/01/1430452763_372695.png">
+<meta property="og:description" content="最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去，经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/sequence.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hexo+github搭建过程总结">
-<meta name="twitter:description" content="折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→
-git客户端git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错
-12$ hexosh.exe&quot;:">
+<meta name="twitter:title" content="序列sequence生成顺序与应用数据持久化入库顺序的一致性">
+<meta name="twitter:description" content="最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去，经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -87,14 +81,14 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/02/hexo-github搭建过程总结/" title="hexo+github搭建过程总结" itemprop="url">hexo+github搭建过程总结</a>
+      <a href="/2016/10/24/sequence生成顺序与应用数据持久化入库顺序的一致性/" title="序列sequence生成顺序与应用数据持久化入库顺序的一致性" itemprop="url">序列sequence生成顺序与应用数据持久化入库顺序的一致性</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-02T09:34:40.000Z" itemprop="datePublished"> 发表于 2015-05-02</time>
+    <time datetime="2016-10-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2016-10-24</time>
     
   </p>
 </header>
@@ -103,19 +97,14 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#git客户端"><span class="toc-number">1.</span> <span class="toc-text">git客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#github_pages"><span class="toc-number">2.</span> <span class="toc-text">github pages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hexo_deploy"><span class="toc-number">3.</span> <span class="toc-text">hexo deploy</span></a></li></ol>
+			
 		
 		</div>
 		
-		<p>   折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→</p>
-<h2 id="git客户端">git客户端</h2><p>git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo</span><br><span class="line">sh.exe<span class="string">": hexo: command not found</span></span><br></pre></td></tr></table></figure>
-<p>找各种方法都不行，后来把两个客户端都卸载了，只安装msysgit再装hexo就OK了</p>
-<h2 id="github_pages">github pages</h2><p>这是一个疑问，到现在还没有完全弄明白，就是在新建一个github工程后，直接在master分支新建文件作为github pages的项目，包括我在网上看到各种步骤和指引都是这样，但是部署好以后，一直报github 404<br>我的解决办法是在项目的setting的里面，找到github pages的选项，选择Automatic page generator，自动产生一些github pages的文件，然后再git上传文件覆盖它，再部署就可以了</p>
-<h2 id="hexo_deploy">hexo deploy</h2><p>在hexo安装好以后，把本地生成的文件传到远程github上，执行hexo deploy，不报任何错，然始终传不上去<br><img src="http://img.ask.csdn.net/upload/201505/01/1430452763_372695.png"><br>重新配置根目录下的_config.yml即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy: </span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repository: git@github.com:corbam/myzchi.github.com.git</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure></p>
-<p>其中第二项的repository，很多人配置成</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repository: https://github.com/xxx/xxx.github.io.git</span><br></pre></td></tr></table></figure>
-<p>这种https的url配置后我是上传不上去的，只能安装第一种即ssh的url方式配置</p>
+		<p>最近项目中遇到一个问题，数据在不同库之间进行同步的时候，部分数据没有同步过去，经过检查，发现是同步的时候很不明智的用序列sequence检查数据的先后性，然后增量数据同步，因为依次取数据库sequence的时候，应用程序中的数据入库持久化是有先后顺序的，优先取sequence的应用程序可能执行比较慢，后取sequence的应用程序已经提前完成持久化动作，因此sequence生成顺序和数据持久化入库顺序并不保持一致，Oracle是如此，mysql呢？mysql设置自增主键是否也是这种情况，于是做了个测试</p>
+<p>在mysql建一张表，设置自增主键<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE TEST_ZC (   </span><br><span class="line">    ID NUMBER(<span class="number">19</span>,<span class="number">0</span>) NOT NULL AUTO_INCREMENT, </span><br><span class="line">    TIME TIMESTAMP NULL DEFAULT NULL,  </span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>然后应用程序，比较主键和时间</p>
+<p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/sequence.png"><br>可有看到时间和序列之间并不一致，即Oracle中sequence和MySQL自增主键一样，和数据持久化入库时间并不具有一致性</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -129,7 +118,7 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/git/">git</a><a href="/tags/github/">github</a><a href="/tags/hexo/">hexo</a>
+  <span></span> <a href="/tags/Redis/">Redis</a>
   </div>
 
 </div>
@@ -138,7 +127,7 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/02/hexo-github搭建过程总结/" data-title="hexo+github搭建过程总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2016/10/24/sequence生成顺序与应用数据持久化入库顺序的一致性/" data-title="序列sequence生成顺序与应用数据持久化入库顺序的一致性 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -152,18 +141,18 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/05/13/NoSQL思维导图/" title="NoSQL思维导图">
+ <a href="/2016/10/24/序列sequence生成顺序与应用数据持久化入库顺序的一致性/" title="Redis学习总结">
   <strong>上一篇：</strong><br/>
   <span>
-  NoSQL思维导图</span>
+  Redis学习总结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/04/06/普陀山东极岛之旅/"  title="普陀山+东极岛之旅">
+<a href="/2016/04/07/SOA服务架构和微服务架构的异同/"  title="SOA服务架构和微服务架构的异同">
  <strong>下一篇：</strong><br/> 
- <span>普陀山+东极岛之旅
+ <span>SOA服务架构和微服务架构的异同
 </span>
 </a>
 </div>
@@ -172,7 +161,7 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/05/02/hexo-github搭建过程总结/" data-title="hexo+github搭建过程总结" data-url="http://yoursite.com/2015/05/02/hexo-github搭建过程总结/"></div>
+	<div class="ds-thread" data-thread-key="2016/10/24/sequence生成顺序与应用数据持久化入库顺序的一致性/" data-title="序列sequence生成顺序与应用数据持久化入库顺序的一致性" data-url="http://yoursite.com/2016/10/24/sequence生成顺序与应用数据持久化入库顺序的一致性/"></div>
 </section>
 
 
@@ -182,7 +171,7 @@ git客户端git有个windows的(git for windows)可视化操作工具：msysgit�
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#git客户端"><span class="toc-number">1.</span> <span class="toc-text">git客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#github_pages"><span class="toc-number">2.</span> <span class="toc-text">github pages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hexo_deploy"><span class="toc-number">3.</span> <span class="toc-text">hexo deploy</span></a></li></ol>
+ 
  
   </div>
 
