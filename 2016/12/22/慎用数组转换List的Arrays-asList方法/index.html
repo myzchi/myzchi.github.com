@@ -1,0 +1,523 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ZhangChi&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="ZhangChi">
+    
+
+    
+    <meta name="description" content="title: “慎用数组转换List的Arrays.asList方法”date: 2016-10-22 12:52:37category: 学海无涯toc: falsetags: List
+最近进行程序测试的时候报了异常，发现是list使用remove的是报的错位，信息如下：
+12java.lang.UnsupportedOperationException at java.util.Abstra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZhangChi's Blog">
+<meta property="og:url" content="http://yoursite.com/2016/12/22/慎用数组转换List的Arrays-asList方法/index.html">
+<meta property="og:site_name" content="ZhangChi's Blog">
+<meta property="og:description" content="title: “慎用数组转换List的Arrays.asList方法”date: 2016-10-22 12:52:37category: 学海无涯toc: falsetags: List
+最近进行程序测试的时候报了异常，发现是list使用remove的是报的错位，信息如下：
+12java.lang.UnsupportedOperationException at java.util.Abstra">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZhangChi's Blog">
+<meta name="twitter:description" content="title: “慎用数组转换List的Arrays.asList方法”date: 2016-10-22 12:52:37category: 学海无涯toc: falsetags: List
+最近进行程序测试的时候报了异常，发现是list使用remove的是报的错位，信息如下：
+12java.lang.UnsupportedOperationException at java.util.Abstra">
+<meta name="twitter:creator" content="@TheCorbam">
+
+    
+    <link rel="alternative" href="/atom.xml" title="ZhangChi&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="ZhangChi&#39;s Blog" title="ZhangChi&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="ZhangChi&#39;s Blog">ZhangChi&#39;s Blog</a></h1>
+				<h2 class="blog-motto">如何度过一天，就会如何度过一生</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/12/22/慎用数组转换List的Arrays-asList方法/" title="" itemprop="url"></a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
+		
+  <p class="article-time">
+    <time datetime="2016-12-22T09:53:33.926Z" itemprop="datePublished"> 发表于 2016-12-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>title: “慎用数组转换List的Arrays.asList方法”<br>date: 2016-10-22 12:52:37<br>category: 学海无涯<br>toc: false<br>tags: List</p>
+<p>最近进行程序测试的时候报了异常，发现是list使用remove的是报的错位，信息如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java.lang.UnsupportedOperationException</span><br><span class="line"> at java.util.AbstractList.remove(Unknown Source)</span><br></pre></td></tr></table></figure>
+<p>list为什么使用remove会报这个错呢？查看原因，发现是因为list是使用数组转换List的Arrays.asList方法得到的，查看一下Java API对此方法的描述</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">asList</span><br><span class="line">public static &lt;T&gt; List&lt;T&gt; asList(T... a)返回一个受指定数组支持的固定大小的列表。（对返回列表的更改会“直接写”到数组。）此方法同 Collection.toArray() 一起，充当了基于数组的 API 与基于 collection 的 API 之间的桥梁。返回的列表是可序列化的，并且实现了 RandomAccess。 </span><br><span class="line">此方法还提供了一个创建固定长度的列表的便捷方法，该列表被初始化为包含多个元素： </span><br><span class="line"></span><br><span class="line">     List&lt;String&gt; stooges = Arrays.asList(<span class="string">"Larry"</span>, <span class="string">"Moe"</span>, <span class="string">"Curly"</span>);</span><br><span class="line"> </span><br><span class="line">参数：</span><br><span class="line">     a - 支持列表的数组。 </span><br><span class="line">返回：</span><br><span class="line">     指定数组的列表视图。</span><br></pre></td></tr></table></figure>
+<p>只有该方法的定义，并未解释异常的原因，那就查一下源码，源码如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public static transient List asList(Object aobj[])</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">return</span> new ArrayList(aobj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>返回值是一个ArrayList<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">public class Arrays</span><br><span class="line">&#123;</span><br><span class="line">    private static class ArrayList extends AbstractList</span><br><span class="line">        implements RandomAccess, Serializable</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        public int <span class="function"><span class="title">size</span></span>()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">return</span> a.length;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Object[] <span class="function"><span class="title">toArray</span></span>()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">return</span> (Object[])((Object []) (a)).clone();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Object[] toArray(Object aobj[])</span><br><span class="line">        &#123;</span><br><span class="line">            int i = size();</span><br><span class="line">            <span class="keyword">if</span>(aobj.length &lt; i)</span><br><span class="line">                <span class="built_in">return</span> Arrays.copyOf(a, i, ((Object) (aobj)).getClass());</span><br><span class="line">            System.arraycopy(((Object) (a)), <span class="number">0</span>, ((Object) (aobj)), <span class="number">0</span>, i);</span><br><span class="line">            <span class="keyword">if</span>(aobj.length &gt; i)</span><br><span class="line">                aobj[i] = null;</span><br><span class="line">            <span class="built_in">return</span> aobj;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Object get(int i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">return</span> a[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public Object <span class="built_in">set</span>(int i, Object obj)</span><br><span class="line">        &#123;</span><br><span class="line">            Object obj1 = a[i];</span><br><span class="line">            a[i] = obj;</span><br><span class="line">            <span class="built_in">return</span> obj1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public int indexOf(Object obj)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(obj == null)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span>(int i = <span class="number">0</span>; i &lt; a.length; i++)</span><br><span class="line">                    <span class="keyword">if</span>(a[i] == null)</span><br><span class="line">                        <span class="built_in">return</span> i;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span>(int j = <span class="number">0</span>; j &lt; a.length; j++)</span><br><span class="line">                    <span class="keyword">if</span>(obj.equals(a[j]))</span><br><span class="line">                        <span class="built_in">return</span> j;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public boolean contains(Object obj)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">return</span> indexOf(obj) != -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        private static final long serialVersionUID = -<span class="number">2764017481108945198</span>L;</span><br><span class="line">        private final Object a[];</span><br><span class="line"></span><br><span class="line">        ArrayList(Object aobj[])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(aobj == null)</span><br><span class="line">            &#123;</span><br><span class="line">                throw new NullPointerException();</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                a = aobj;</span><br><span class="line">                <span class="built_in">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>ArrayList是Array中的一个内部类，其中并没有remove方法<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public Object remove(int i)</span><br><span class="line">&#123;</span><br><span class="line">    throw new UnsupportedOperationException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看父类AbstractList，remove方法在此，它直接抛出了该异常；<br>至此我们知道，数据转换List得到的不是java.util下面顶级list，而是数据内部一个继承AbstractList的list，而这个种类的list并不具备remove方法。</p>
+<p>想了一下，解决办法如下：<br>重新new一个list，将转换得到的list值转入进去<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List newList = new ArrayList&lt;&gt;(arrayTolist);</span><br></pre></td></tr></table></figure></p>
+<p>这样就可以继续使用remove方法了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2016/12/22/慎用数组转换List的Arrays-asList方法/" data-title="ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/24/序列sequence生成顺序与应用数据持久化入库顺序的一致性/"  title="序列sequence生成顺序与应用数据持久化入库顺序的一致性">
+ <strong>下一篇：</strong><br/> 
+ <span>序列sequence生成顺序与应用数据持久化入库顺序的一致性
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/12/22/慎用数组转换List的Arrays-asList方法/" data-title="" data-url="http://yoursite.com/2016/12/22/慎用数组转换List的Arrays-asList方法/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/旅游摄影/" title="旅游摄影">旅游摄影<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/摄影/" title="摄影">摄影<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/git/" title="git">git<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/阅读/" title="阅读">阅读<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/github/" title="github">github<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eclipse/" title="eclipse">eclipse<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tomcat/" title="tomcat">tomcat<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SOA/" title="SOA">SOA<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NoSQL/" title="NoSQL">NoSQL<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zybuluo.com/mdeditor" target="_blank" title="Cmd Markdown 编辑阅读器">Cmd Markdown 编辑阅读器</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=2489280091&verifier=a63d6d67&dpc=1"></iframe>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Zhang Chi in Asiainfo. <br/>
+			This is my blog.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/corbam" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		<a href="https://twitter.com/TheCorbam" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/chi.zhang.10441861" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		
+		
+		
+		
+		<a href="mailto:myzchi@outlook.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="ZhangChi">ZhangChi</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"corbam"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
