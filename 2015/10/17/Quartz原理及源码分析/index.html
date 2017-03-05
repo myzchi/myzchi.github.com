@@ -99,7 +99,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#调度过程"><span class="toc-number">1.</span> <span class="toc-text">调度过程</span></a></li></ol>
+			
 		
 		</div>
 		
@@ -108,48 +108,6 @@
 <p>3、Trigger代表一个调度参数的配置，什么时候去调。</p>
 <p>4、Scheduler代表一个调度容器，一个调度容器中可以注册多个JobDetail和Trigger。当Trigger与JobDetail组合，就可以被Scheduler容器调度了。</p>
 <p>最简单的HelloWorld示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>  <span class="class"><span class="keyword">class</span>  <span class="title">HelloWorldMain</span> </span>&#123;</span><br><span class="line">     Log log = LogFactory.getLog(HelloWorldMain. <span class="class"><span class="keyword">class</span> )</span>;</span><br><span class="line">     </span><br><span class="line">     <span class="function"><span class="keyword">public</span>  <span class="keyword">void</span>  <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">try</span>  &#123;</span><br><span class="line">             <span class="comment">//取得Schedule对象</span></span><br><span class="line">             SchedulerFactory sf =  <span class="keyword">new</span>  StdSchedulerFactory();</span><br><span class="line">             Scheduler sch = sf.getScheduler(); </span><br><span class="line">             </span><br><span class="line">             JobDetail jd =  <span class="keyword">new</span>  JobDetail( <span class="string">"HelloWorldJobDetail"</span> ,Scheduler.DEFAULT_GROUP,HelloWorldJob. <span class="class"><span class="keyword">class</span> )</span>;</span><br><span class="line">             Trigger tg = TriggerUtils.makeMinutelyTrigger( <span class="number">1</span> );</span><br><span class="line">             tg.setName( <span class="string">"HelloWorldTrigger"</span> );</span><br><span class="line">             </span><br><span class="line">             sch.scheduleJob(jd, tg);</span><br><span class="line">             sch.start();</span><br><span class="line">         &#125;  <span class="keyword">catch</span>  ( Exception e ) &#123;</span><br><span class="line">             e.printStackTrace();</span><br><span class="line">             </span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span>  <span class="keyword">static</span>  <span class="keyword">void</span>  <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">         HelloWorldMain hw =  <span class="keyword">new</span>  HelloWorldMain();</span><br><span class="line">         hw.run();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>看到初始化一个调度器需要用工厂类获取实例:<br><figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SchedulerFactory sf =  <span class="keyword">new</span>  StdSchedulerFactory();</span><br><span class="line">Scheduler sch = sf.getScheduler();</span><br><span class="line">sch.start();<span class="comment">//启动</span></span><br><span class="line"><span class="string">``</span><span class="string">` </span><br><span class="line">跟进StdSchedulerFactory的getScheduler()方法:</span></span><br></pre></td></tr></table></figure></p>
-<p>public  Scheduler getScheduler()  throws  SchedulerException {<br>         if  (cfg ==  null ) {<br>             initialize();<br>         }<br>         SchedulerRepository schedRep = SchedulerRepository.getInstance();<br>         //从”调度器仓库”中根据properties的SchedulerName配置获取一个调度器实例<br>         Scheduler sched = schedRep.lookup(getSchedulerName());<br>         if  (sched !=  null ) {<br>             if  (sched.isShutdown()) {<br>                 schedRep.remove(getSchedulerName());<br>             }  else  {<br>                 return  sched;<br>             }<br>         }<br>         //初始化调度器<br>         sched = instantiate();<br>         return  sched;<br>     }<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">跟进初始化调度器方法<span class="built_in">sched</span> = instantiate();发现是一个<span class="number">700</span>多行的初始化方法,涉及到</span><br><span class="line"></span><br><span class="line">读取配置资源,</span><br><span class="line">生成QuartzScheduler对象,</span><br><span class="line">创建该对象的运行线程,并启动线程;</span><br><span class="line">初始化JobStore,QuartzScheduler,DBConnectionManager等重要组件, </span><br><span class="line">至此,调度器的初始化工作已完成,初始化工作中quratz读取了数据库中存放的对应当前调度器的锁信息,对应CRM中的表QRTZ2_LOCKS,中的STATE_ACCESS,TRIGGER_ACCESS两个LOCK_NAME.</span><br></pre></td></tr></table></figure></p>
-<p>public  void  initialize(ClassLoadHelper loadHelper,<br>             SchedulerSignaler signaler)  throws  SchedulerConfigException {<br>         if  (dsName ==  null ) {<br>             throw  new  SchedulerConfigException( “DataSource name not set.” );<br>         }<br>         classLoadHelper = loadHelper;<br>         if (isThreadsInheritInitializersClassLoadContext()) {<br>             log.info( “JDBCJobStore threads will inherit ContextClassLoader of thread: “  + Thread.currentThread().getName());<br>             initializersLoader = Thread.currentThread().getContextClassLoader();<br>         }</p>
-<pre><code>    <span class="keyword">this</span> .schedSignaler = signaler;
-    <span class="comment">// If the user hasn't specified an explicit lock handler, then</span>
-    <span class="comment">// choose one based on CMT/Clustered/UseDBLocks.</span>
-    <span class="keyword">if</span>  (getLockHandler() ==  <span class="keyword">null</span> ) {
-
-        <span class="comment">// If the user hasn't specified an explicit lock handler,</span>
-        <span class="comment">// then we *must* use DB locks with clustering</span>
-        <span class="keyword">if</span>  (isClustered()) {
-            setUseDBLocks( <span class="keyword">true</span> );
-        }
-
-        <span class="keyword">if</span>  (getUseDBLocks()) {
-            <span class="keyword">if</span> (getDriverDelegateClass() !=  <span class="keyword">null</span>  &amp;&amp; getDriverDelegateClass().equals(MSSQLDelegate. <span class="class"><span class="keyword">class</span> .<span class="title">getName</span>())) </span>{
-                <span class="keyword">if</span> (getSelectWithLockSQL() ==  <span class="keyword">null</span> ) {
-                    <span class="comment">//读取数据库LOCKS表中对应当前调度器的锁信息</span>
-                    <span class="built_in">String</span> msSqlDflt =  <span class="string">"SELECT * FROM {0}LOCKS WITH (UPDLOCK,ROWLOCK) WHERE "</span>  + COL_SCHEDULER_NAME +  <span class="string">" = {1} AND LOCK_NAME = ?"</span> ;
-                    getLog().info( <span class="string">"Detected usage of MSSQLDelegate class - defaulting 'selectWithLockSQL' to '"</span>  + msSqlDflt +  <span class="string">"'."</span> );
-                    setSelectWithLockSQL(msSqlDflt);
-                }
-            }
-            getLog().info( <span class="string">"Using db table-based data access locking (synchronization)."</span> );
-            setLockHandler( <span class="keyword">new</span>  StdRowLockSemaphore(getTablePrefix(), getInstanceName(), getSelectWithLockSQL()));
-        }  <span class="keyword">else</span>  {
-            getLog().info(
-                <span class="string">"Using thread monitor-based data access locking (synchronization)."</span> );
-            setLockHandler( <span class="keyword">new</span>  SimpleSemaphore());
-        }
-    }
-}
-</code></pre><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">当调用sch.<span class="built_in">start</span>();方法时,scheduler做了如下工作:</span><br><span class="line"></span><br><span class="line"><span class="number">1</span>.通知listener开始启动</span><br><span class="line"><span class="number">2</span>.启动调度器线程</span><br><span class="line"><span class="number">3</span>.启动plugin</span><br><span class="line"><span class="number">4</span>.通知listener启动完成</span><br></pre></td></tr></table></figure>
-<p>public  void  start()  throws  SchedulerException {<br>         if  (shuttingDown|| closed) {<br>             throw  new  SchedulerException(<br>                     “The Scheduler cannot be restarted after shutdown() has been called.” );<br>         }<br>         // QTZ-212 : calling new schedulerStarting() method on the listeners<br>         // right after entering start()<br>         //通知该调度器的listener启动开始<br>         notifySchedulerListenersStarting();<br>         if  (initialStart ==  null ) {<br>             initialStart =  new  Date();<br>             //启动调度器的线程<br>             this .resources.getJobStore().schedulerStarted();<br>             //启动plugins<br>             startPlugins();<br>         }  else  {<br>             resources.getJobStore().schedulerResumed();<br>         }<br>         schedThread.togglePause( false );<br>         getLog().info(<br>                 “Scheduler “  + resources.getUniqueIdentifier() +  “ started.” );<br>         //通知该调度器的listener启动完成<br>         notifySchedulerListenersStarted();<br>     }<br>``` </p>
-<h2 id="调度过程">调度过程</h2><p>调度器启动后,调度器的线程就处于运行状态了,开始执行quartz的主要工作–调度任务.</p>
-<p>前面已介绍过,任务的调度过程大致分为三步:</p>
-<p>1.获取待触发trigger</p>
-<p>2.触发trigger</p>
-<p>3.实例化并执行Job</p>
-<p>下面分别分析三个阶段的源码.</p>
-<p>QuartzSchedulerThread是调度器线程类,调度过程的三个步骤就承载在run()方法中,调度器每次获取到的trigger是30s内需要执行的,所以要等待一段时间至trigger执行前2ms.在等待过程中涉及到一个新加进来更紧急的trigger的处理逻辑.分析写在注释中,不再赘述；调度器的只要在运行状态,就会不停地执行调度流程.值得注意的是,在流程的最后线程会等待一个随机的时间.这就是quartz自带的负载平衡机制.</p>
-<p>总结<br>简单地说,quartz的分布式调度策略是以数据库为边界资源的一种异步策略.各个调度器都遵守一个基于数据库锁的操作规则保证了操作的唯一性.同时多个节点的异步运行保证了服务的可靠</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -206,7 +164,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#调度过程"><span class="toc-number">1.</span> <span class="toc-text">调度过程</span></a></li></ol>
+ 
  
   </div>
 
