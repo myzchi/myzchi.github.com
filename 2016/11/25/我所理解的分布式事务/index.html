@@ -4,28 +4,26 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Redis学习总结 | ZhangChi&#39;s Blog</title>
+    <title>我所理解的分布式事务 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="ZhangChi">
     
 
     
-    <meta name="description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+    <meta name="description" content="CAP理论说到分布式事务，必须提到的就是CAP理论，即同时满足“CAP定律”中的“一致性”、“可用性”和“分区容错性”三者是不可能的；大多数的场景，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可；阿里云好像有一个GTS分布式事务框架，是做强一致性的，目前行业还未看到有做强一致性方案。
+两阶段提交提到分布式系统，必然要提到分布式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis学习总结">
-<meta property="og:url" content="http://yoursite.com/2015/05/24/redis学习总结/index.html">
+<meta property="og:title" content="我所理解的分布式事务">
+<meta property="og:url" content="http://yoursite.com/2016/11/25/我所理解的分布式事务/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta property="og:description" content="CAP理论说到分布式事务，必须提到的就是CAP理论，即同时满足“CAP定律”中的“一致性”、“可用性”和“分区容错性”三者是不可能的；大多数的场景，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可；阿里云好像有一个GTS分布式事务框架，是做强一致性的，目前行业还未看到有做强一致性方案。
+两阶段提交提到分布式系统，必然要提到分布式">
+<meta property="og:image" content="http://7xiwo7.com1.z0.glb.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis学习总结">
-<meta name="twitter:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta name="twitter:title" content="我所理解的分布式事务">
+<meta name="twitter:description" content="CAP理论说到分布式事务，必须提到的就是CAP理论，即同时满足“CAP定律”中的“一致性”、“可用性”和“分区容错性”三者是不可能的；大多数的场景，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可；阿里云好像有一个GTS分布式事务框架，是做强一致性的，目前行业还未看到有做强一致性方案。
+两阶段提交提到分布式系统，必然要提到分布式">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -86,38 +84,25 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
+      <a href="/2016/11/25/我所理解的分布式事务/" title="我所理解的分布式事务" itemprop="url">我所理解的分布式事务</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
+    <time datetime="2016-11-25T11:15:20.000Z" itemprop="datePublished"> 发表于 2016-11-25</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
-		
-		</div>
-		
-		<p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
-<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
-<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
-<h1 id="Redis安装">Redis安装</h1><hr>
-<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
-<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
-<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
-<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
-<p>说明已经成功了</p>
-<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
-<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
-<h1 id="Redis参数配置">Redis参数配置</h1>  
+		<h1 id="CAP理论">CAP理论</h1><p>说到分布式事务，必须提到的就是CAP理论，即同时满足“CAP定律”中的“一致性”、“可用性”和“分区容错性”三者是不可能的；大多数的场景，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可；阿里云好像有一个GTS分布式事务框架，是做强一致性的，目前行业还未看到有做强一致性方案。</p>
+<h1 id="两阶段提交">两阶段提交</h1><p>提到分布式系统，必然要提到分布式事务。要想理解分布式事务，不得不先介绍一下两阶段提交协议。拿网上的一个例子来说明：<br>第一阶段，张老师作为“协调者”，给小强和小明（参与者、节点）发微信，组织他们俩明天8点在学校门口集合，一起去爬山，然后开始等待小强和小明答复。<br>第二阶段，如果小强和小明都回答没问题，那么大家如约而至。如果小强或者小明其中一人回答说“明天没空，不行”，那么张老师会立即通知小强和小明“爬山活动取消”。<br>这时候会发现，这个过程中可能有很多问题的。如果小强没看手机，那么张老师会一直等着答复，小明可能在家里把爬山装备都准备好了却一直等着张老师确认信息。更严重的是，如果到明天8点小强还没有答复，那么就算“超时”了，那小明到底去还是不去集合爬山呢？这就是两阶段提交协议的弊病，所以后来业界又引入了三阶段提交协议来解决该类问题，当然这不是两阶段提价的最重要问题，最重要的两阶段有个预提交的阶段，非常影响性能，这在讲究用户体验至上的情况下，基本不能容忍的。</p>
+<h1 id="最终一致性解决方案">最终一致性解决方案</h1><p>既然不能容忍强一致性带来的性能问题，那肯定是要最终一致性来保证事务和数据的一致性了，而且这也是目前行业内比较流行的解决方案，但由于各行各业业务千差万别，所以目前仍然没有一个万能方案来适应各个公司各个业务场景，我看过支付宝、蘑菇街、乃至其他同行分享的方案，都有公司很深的烙印。最终一致性的原理，即是规避开分布式事务的强一致性，在可能出现不一致场景的情况下，允许出现一段时间的数据不一致，但经过处理，最终系统整体的数据是准确的是符合一致性的。实现这种最终一致性方案，有基于补偿、基于消息的、基于tcc的，但万变不离其宗，基本都是对rpc调用过程进行结果确认，再通过反向处理服务保证最后数据的准确性。</p>
+<h1 id="亚信落地方案">亚信落地方案</h1><h2 id="作为服务运营商的解决方案，就以手机运营商这边很重要的一个场景为例，用户有1000积分，可以兑换100M流量，而扣减用户1000积分和给用户送100M流量分属2个系统（和实际情况不完全一致，仅举例说明），需要调用2次rpc服务，一旦扣减积分成功，但兑换流量因为业务或者超时等业务或系统异常，流量这一步的调用失败，而这时候1000积分已经扣减掉了，系统发现这个问题，则需要将1000积分重新给用户加上，这部分功能由拦截器发现集成到客户端的jar里面，然后对调用情况进行落表，记录下调用2次rpc过程的成功和失败，出现不一致的时候，发送消息给积分系统，由积分系统来将扣减的1000积分重新加上，流程见下图">作为服务运营商的解决方案，就以手机运营商这边很重要的一个场景为例，用户有1000积分，可以兑换100M流量，而扣减用户1000积分和给用户送100M流量分属2个系统（和实际情况不完全一致，仅举例说明），需要调用2次rpc服务，一旦扣减积分成功，但兑换流量因为业务或者超时等业务或系统异常，流量这一步的调用失败，而这时候1000积分已经扣减掉了，系统发现这个问题，则需要将1000积分重新给用户加上，这部分功能由拦截器发现集成到客户端的jar里面，然后对调用情况进行落表，记录下调用2次rpc过程的成功和失败，出现不一致的时候，发送消息给积分系统，由积分系统来将扣减的1000积分重新加上，流程见下图</h2><p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1.png"></p>
+<h1 id="总结">总结</h1><p>分布式事务的解决方案必须根据业务的实际情况来考虑，同时衍生出一系列问题，比如消息的丢失、重复，反撤的性能如何等等，都是需要考虑的问题，里面的内容仍需要不断完善。</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -130,7 +115,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Redis/">Redis</a>
+  <span></span> <a href="/tags/分布式/">分布式</a>
   </div>
 
 </div>
@@ -139,7 +124,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/24/redis学习总结/" data-title="Redis学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2016/11/25/我所理解的分布式事务/" data-title="我所理解的分布式事务 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,18 +138,18 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/06/09/阅读记录（2015年6月9日）/" title="阅读记录-2015年6月9日">
+ <a href="/2016/12/31/2016年工作总结/" title="2016年工作总结">
   <strong>上一篇：</strong><br/>
   <span>
-  阅读记录-2015年6月9日</span>
+  2016年工作总结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/05/13/NoSQL思维导图/"  title="NoSQL思维导图">
+<a href="/2016/10/24/序列sequence生成顺序与应用数据持久化入库顺序的一致性/"  title="序列sequence生成顺序与应用数据持久化入库顺序的一致性">
  <strong>下一篇：</strong><br/> 
- <span>NoSQL思维导图
+ <span>序列sequence生成顺序与应用数据持久化入库顺序的一致性
 </span>
 </a>
 </div>
@@ -173,19 +158,12 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/05/24/redis学习总结/" data-title="Redis学习总结" data-url="http://yoursite.com/2015/05/24/redis学习总结/"></div>
+	<div class="ds-thread" data-thread-key="2016/11/25/我所理解的分布式事务/" data-title="我所理解的分布式事务" data-url="http://yoursite.com/2016/11/25/我所理解的分布式事务/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-  <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
- 
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
- 
-  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -415,8 +393,6 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
         
     }
   });

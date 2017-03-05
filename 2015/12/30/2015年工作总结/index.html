@@ -4,28 +4,31 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Redis学习总结 | ZhangChi&#39;s Blog</title>
+    <title>2015年工作总结 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="ZhangChi">
     
 
     
-    <meta name="description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+    <meta name="description" content="2015年，参与了几个项目，分布式任务调度管理平台、浙江移动流量项目、浙江移动crm服务化项目，每一个周期都不算长。
+分布式任务调度管理：1、结合quartz实现分布式调度任务管理2、ZooKeeper作为配置管理中心的开发与应用3、心跳、监控等系统高可用的实现
+浙江流量项目：1、流量模型的建立与开发2、抢红包的实现（仍在学习中）
+浙江移动crm服务化：1、账单发票模型的建立与业务流程2、大账户优">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis学习总结">
-<meta property="og:url" content="http://yoursite.com/2015/05/24/redis学习总结/index.html">
+<meta property="og:title" content="2015年工作总结">
+<meta property="og:url" content="http://yoursite.com/2015/12/30/2015年工作总结/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta property="og:description" content="2015年，参与了几个项目，分布式任务调度管理平台、浙江移动流量项目、浙江移动crm服务化项目，每一个周期都不算长。
+分布式任务调度管理：1、结合quartz实现分布式调度任务管理2、ZooKeeper作为配置管理中心的开发与应用3、心跳、监控等系统高可用的实现
+浙江流量项目：1、流量模型的建立与开发2、抢红包的实现（仍在学习中）
+浙江移动crm服务化：1、账单发票模型的建立与业务流程2、大账户优">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis学习总结">
-<meta name="twitter:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta name="twitter:title" content="2015年工作总结">
+<meta name="twitter:description" content="2015年，参与了几个项目，分布式任务调度管理平台、浙江移动流量项目、浙江移动crm服务化项目，每一个周期都不算长。
+分布式任务调度管理：1、结合quartz实现分布式调度任务管理2、ZooKeeper作为配置管理中心的开发与应用3、心跳、监控等系统高可用的实现
+浙江流量项目：1、流量模型的建立与开发2、抢红包的实现（仍在学习中）
+浙江移动crm服务化：1、账单发票模型的建立与业务流程2、大账户优">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -86,38 +89,24 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
+      <a href="/2015/12/30/2015年工作总结/" title="2015年工作总结" itemprop="url">2015年工作总结</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
+    <time datetime="2015-12-30T11:15:20.000Z" itemprop="datePublished"> 发表于 2015-12-30</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
-		
-		</div>
-		
-		<p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
-<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
-<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
-<h1 id="Redis安装">Redis安装</h1><hr>
-<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
-<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
-<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
-<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
-<p>说明已经成功了</p>
-<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
-<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
-<h1 id="Redis参数配置">Redis参数配置</h1>  
+		<p>2015年，参与了几个项目，分布式任务调度管理平台、浙江移动流量项目、浙江移动crm服务化项目，每一个周期都不算长。</p>
+<p>分布式任务调度管理：<br>1、结合quartz实现分布式调度任务管理<br>2、ZooKeeper作为配置管理中心的开发与应用<br>3、心跳、监控等系统高可用的实现</p>
+<p>浙江流量项目：<br>1、流量模型的建立与开发<br>2、抢红包的实现（仍在学习中）</p>
+<p>浙江移动crm服务化：<br>1、账单发票模型的建立与业务流程<br>2、大账户优化的处理</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -130,7 +119,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Redis/">Redis</a>
+  <span></span> <a href="/tags/总结/">总结</a>
   </div>
 
 </div>
@@ -139,7 +128,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/24/redis学习总结/" data-title="Redis学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/12/30/2015年工作总结/" data-title="2015年工作总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,18 +142,18 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/06/09/阅读记录（2015年6月9日）/" title="阅读记录-2015年6月9日">
+ <a href="/2016/03/14/一个电脑上设置里两个不同的git账号/" title="一个电脑上设置里两个不同的git账号">
   <strong>上一篇：</strong><br/>
   <span>
-  阅读记录-2015年6月9日</span>
+  一个电脑上设置里两个不同的git账号</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/05/13/NoSQL思维导图/"  title="NoSQL思维导图">
+<a href="/2015/10/17/Quartz原理及源码分析/"  title="Quartz原理及源码分析">
  <strong>下一篇：</strong><br/> 
- <span>NoSQL思维导图
+ <span>Quartz原理及源码分析
 </span>
 </a>
 </div>
@@ -173,19 +162,12 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/05/24/redis学习总结/" data-title="Redis学习总结" data-url="http://yoursite.com/2015/05/24/redis学习总结/"></div>
+	<div class="ds-thread" data-thread-key="2015/12/30/2015年工作总结/" data-title="2015年工作总结" data-url="http://yoursite.com/2015/12/30/2015年工作总结/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-  <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
- 
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
- 
-  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -415,8 +397,6 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
         
     }
   });

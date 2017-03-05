@@ -95,7 +95,28 @@
 </header>
     <div class="article-content">
         
-        
+        <p>又到了年终做总结的日子，过去一年，通过项目落地与开源资料学习相结合，认识到作为一个开发人员一个技术人员保持竞争力的重要性和核心要素。</p>
+<p>年初的几个月，系统服务化的节奏依然属于初期，账务中心属于整个浙江移动服务化比较底层核心的位置，因为主要涉及用户的各种资金资产，所以重构服务化步伐比较缓慢，除了不停的梳理代码、写文档之外，就是要熟悉基础设施架构的使用与落地； 下半年，正式进入开发周期，项目上线也安排进日程，也就是最近半年，深入了解了SOA服务体系或微服务体系的整体架构实现、技术细节、各个点存在的坑。<br>主要包括：</p>
+<ul>
+<li>1、事务一致性的实现，包括分布式事务的强一致性与最终一致性</li>
+<li>2、性能调优，从QPS、负载到架构、代码、数据库的优化</li>
+<li>3、Java虚拟机的组成、参数、oom等监控与调试</li>
+<li>4、运营商业务支撑系统（crm、boss）模型建立、业务流程、整体架构等应用</li>
+<li>5、自己学习研究jdk的源码及一些开源框架</li>
+</ul>
+<p>当然，以上每一个点专门拿出来都可以详细深入到每一个概念及原理，一年的学习不足以深入覆盖的每一个细节，因此仍在不停学习中。</p>
+<p><strong>“我们读书越多，越发现我们是无知的”</strong>，这句话在过去一年深有体会，12年毕业，至今已有4年半的工作经历，从刚开始自己学习一个框架，都觉得自己又进步了一分，到如今对每一个新技术都战战兢兢保持敬畏之心，自己的心态也在发生改变，作为一个软件行业的开发人、一个技术人，在如今快节奏的互联网更新迭代速度下，必须实时更新自己的技术树。</p>
+<blockquote>
+<ul>
+<li>一、始终保持学习的积极性；</li>
+<li>二、利用看书+利用网络资源覆盖技能知识点；</li>
+<li>三、通过专业技术网站、垂直社区了解行业趋势；</li>
+<li>四、将自己学习到的技能点与实际项目相结合，将知识落地；</li>
+<li>五、与他人交流，同行业的最佳，了解其他企业其他开发人员的技术实现及关注点。</li>
+</ul>
+</blockquote>
+<p>2017，come on! </p>
+
         
         
         <p class="article-more-link">
@@ -125,6 +146,73 @@
 	
 	  	<span></span>
 		<a href="/2016/12/31/2016年工作总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/12/31/2016年工作总结/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/25/我所理解的分布式事务/" title="我所理解的分布式事务" itemprop="url">我所理解的分布式事务</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-25T11:15:20.000Z" itemprop="datePublished"> 发表于 2016-11-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="CAP理论">CAP理论</h1><p>说到分布式事务，必须提到的就是CAP理论，即同时满足“CAP定律”中的“一致性”、“可用性”和“分区容错性”三者是不可能的；大多数的场景，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可；阿里云好像有一个GTS分布式事务框架，是做强一致性的，目前行业还未看到有做强一致性方案。</p>
+<h1 id="两阶段提交">两阶段提交</h1><p>提到分布式系统，必然要提到分布式事务。要想理解分布式事务，不得不先介绍一下两阶段提交协议。拿网上的一个例子来说明：<br>第一阶段，张老师作为“协调者”，给小强和小明（参与者、节点）发微信，组织他们俩明天8点在学校门口集合，一起去爬山，然后开始等待小强和小明答复。<br>第二阶段，如果小强和小明都回答没问题，那么大家如约而至。如果小强或者小明其中一人回答说“明天没空，不行”，那么张老师会立即通知小强和小明“爬山活动取消”。<br>这时候会发现，这个过程中可能有很多问题的。如果小强没看手机，那么张老师会一直等着答复，小明可能在家里把爬山装备都准备好了却一直等着张老师确认信息。更严重的是，如果到明天8点小强还没有答复，那么就算“超时”了，那小明到底去还是不去集合爬山呢？这就是两阶段提交协议的弊病，所以后来业界又引入了三阶段提交协议来解决该类问题，当然这不是两阶段提价的最重要问题，最重要的两阶段有个预提交的阶段，非常影响性能，这在讲究用户体验至上的情况下，基本不能容忍的。</p>
+<h1 id="最终一致性解决方案">最终一致性解决方案</h1><p>既然不能容忍强一致性带来的性能问题，那肯定是要最终一致性来保证事务和数据的一致性了，而且这也是目前行业内比较流行的解决方案，但由于各行各业业务千差万别，所以目前仍然没有一个万能方案来适应各个公司各个业务场景，我看过支付宝、蘑菇街、乃至其他同行分享的方案，都有公司很深的烙印。最终一致性的原理，即是规避开分布式事务的强一致性，在可能出现不一致场景的情况下，允许出现一段时间的数据不一致，但经过处理，最终系统整体的数据是准确的是符合一致性的。实现这种最终一致性方案，有基于补偿、基于消息的、基于tcc的，但万变不离其宗，基本都是对rpc调用过程进行结果确认，再通过反向处理服务保证最后数据的准确性。</p>
+<h1 id="亚信落地方案">亚信落地方案</h1><h2 id="作为服务运营商的解决方案，就以手机运营商这边很重要的一个场景为例，用户有1000积分，可以兑换100M流量，而扣减用户1000积分和给用户送100M流量分属2个系统（和实际情况不完全一致，仅举例说明），需要调用2次rpc服务，一旦扣减积分成功，但兑换流量因为业务或者超时等业务或系统异常，流量这一步的调用失败，而这时候1000积分已经扣减掉了，系统发现这个问题，则需要将1000积分重新给用户加上，这部分功能由拦截器发现集成到客户端的jar里面，然后对调用情况进行落表，记录下调用2次rpc过程的成功和失败，出现不一致的时候，发送消息给积分系统，由积分系统来将扣减的1000积分重新加上，流程见下图">作为服务运营商的解决方案，就以手机运营商这边很重要的一个场景为例，用户有1000积分，可以兑换100M流量，而扣减用户1000积分和给用户送100M流量分属2个系统（和实际情况不完全一致，仅举例说明），需要调用2次rpc服务，一旦扣减积分成功，但兑换流量因为业务或者超时等业务或系统异常，流量这一步的调用失败，而这时候1000积分已经扣减掉了，系统发现这个问题，则需要将1000积分重新给用户加上，这部分功能由拦截器发现集成到客户端的jar里面，然后对调用情况进行落表，记录下调用2次rpc过程的成功和失败，出现不一致的时候，发送消息给积分系统，由积分系统来将扣减的1000积分重新加上，流程见下图</h2><p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1.png"></p>
+<h1 id="总结">总结</h1><p>分布式事务的解决方案必须根据业务的实际情况来考虑，同时衍生出一系列问题，比如消息的丢失、重复，反撤的性能如何等等，都是需要考虑的问题，里面的内容仍需要不断完善。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/分布式/">分布式</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/25/我所理解的分布式事务/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/25/我所理解的分布式事务/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -422,6 +510,72 @@
 	
 	  	<span></span>
 		<a href="/2016/03/14/一个电脑上设置里两个不同的git账号/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/14/一个电脑上设置里两个不同的git账号/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/30/2015年工作总结/" title="2015年工作总结" itemprop="url">2015年工作总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-30T11:15:20.000Z" itemprop="datePublished"> 发表于 2015-12-30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>2015年，参与了几个项目，分布式任务调度管理平台、浙江移动流量项目、浙江移动crm服务化项目，每一个周期都不算长。</p>
+<p>分布式任务调度管理：<br>1、结合quartz实现分布式调度任务管理<br>2、ZooKeeper作为配置管理中心的开发与应用<br>3、心跳、监控等系统高可用的实现</p>
+<p>浙江流量项目：<br>1、流量模型的建立与开发<br>2、抢红包的实现（仍在学习中）</p>
+<p>浙江移动crm服务化：<br>1、账单发票模型的建立与业务流程<br>2、大账户优化的处理</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/总结/">总结</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/30/2015年工作总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/30/2015年工作总结/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -843,140 +997,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/13/NoSQL思维导图/" title="NoSQL思维导图" itemprop="url">NoSQL思维导图</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-13T02:38:36.000Z" itemprop="datePublished"> 发表于 2015-05-13</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><img src="http://7xiwo7.com1.z0.glb.clouddn.com/NoSQL.png"></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/NoSQL/">NoSQL</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/13/NoSQL思维导图/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/13/NoSQL思维导图/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/02/hexo-github搭建过程总结/" title="hexo+github搭建过程总结" itemprop="url">hexo+github搭建过程总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-02T09:34:40.000Z" itemprop="datePublished"> 发表于 2015-05-02</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>   折腾了3天，遇到各种超级坑的问题，总算把hexo+github pages的框架搭建好了，逃离了WordPress →_→</p>
-<h2 id="git客户端">git客户端</h2><p>git有个windows的(git for windows)可视化操作工具：msysgit，github也有一个的客户端github for windows，不知道是不是两者不兼容，两者一起装的时候，在安装hexo后，会报下面的错</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo</span><br><span class="line">sh.exe<span class="string">": hexo: command not found</span></span><br></pre></td></tr></table></figure>
-<p>找各种方法都不行，后来把两个客户端都卸载了，只安装msysgit再装hexo就OK了</p>
-<h2 id="github_pages">github pages</h2><p>这是一个疑问，到现在还没有完全弄明白，就是在新建一个github工程后，直接在master分支新建文件作为github pages的项目，包括我在网上看到各种步骤和指引都是这样，但是部署好以后，一直报github 404<br>我的解决办法是在项目的setting的里面，找到github pages的选项，选择Automatic page generator，自动产生一些github pages的文件，然后再git上传文件覆盖它，再部署就可以了</p>
-<h2 id="hexo_deploy">hexo deploy</h2><p>在hexo安装好以后，把本地生成的文件传到远程github上，执行hexo deploy，不报任何错，然始终传不上去<br><img src="http://img.ask.csdn.net/upload/201505/01/1430452763_372695.png"><br>重新配置根目录下的_config.yml即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy: </span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repository: git@github.com:corbam/myzchi.github.com.git</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure></p>
-<p>其中第二项的repository，很多人配置成</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repository: https://github.com/xxx/xxx.github.io.git</span><br></pre></td></tr></table></figure>
-<p>这种https的url配置后我是上传不上去的，只能安装第一种即ssh的url方式配置</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/git/">git</a><a href="/tags/github/">github</a><a href="/tags/hexo/">hexo</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/02/hexo-github搭建过程总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/02/hexo-github搭建过程总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -995,7 +1015,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>11</sup></a></li>
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>13</sup></a></li>
 		  
 		
 		  
@@ -1020,11 +1040,11 @@
 			
 		
 			
-				<li><a href="/tags/github/" title="github">github<sup>1</sup></a></li>
+				<li><a href="/tags/总结/" title="总结">总结<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>1</sup></a></li>
+				<li><a href="/tags/github/" title="github">github<sup>1</sup></a></li>
 			
 		
 			
@@ -1076,7 +1096,11 @@
 			
 		
 			
-				<li><a href="/tags/总结/" title="总结">总结<sup>1</sup></a></li>
+				<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>1</sup></a></li>
 			
 		
 		</ul>
