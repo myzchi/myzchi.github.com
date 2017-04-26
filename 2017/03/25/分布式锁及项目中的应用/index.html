@@ -4,28 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Redis学习总结 | ZhangChi&#39;s Blog</title>
+    <title>分布式锁及项目中的应用 | ZhangChi&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="ZhangChi">
     
 
     
-    <meta name="description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+    <meta name="description" content="这篇文章也是我对分布式锁认知的一个总结吧，目前所做的流量工程使用到了基于Redis的分布式锁，由此延伸到其他的概念及应用
+什么是分布式锁提到锁，Java开发者的第一印象肯定会想到Java线程中的锁，基于Java的内存模型：每个线程有自己的内存空间，同时这些线程有个共享的主内存，不同线程先更新自身内存再更新主内存，在更新主内存的同一条数据的时候，需要加锁控制。多线程开发中常见锁的关键字有synchr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis学习总结">
-<meta property="og:url" content="http://yoursite.com/2015/05/24/redis学习总结/index.html">
+<meta property="og:title" content="分布式锁及项目中的应用">
+<meta property="og:url" content="http://yoursite.com/2017/03/25/分布式锁及项目中的应用/index.html">
 <meta property="og:site_name" content="ZhangChi's Blog">
-<meta property="og:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta property="og:description" content="这篇文章也是我对分布式锁认知的一个总结吧，目前所做的流量工程使用到了基于Redis的分布式锁，由此延伸到其他的概念及应用
+什么是分布式锁提到锁，Java开发者的第一印象肯定会想到Java线程中的锁，基于Java的内存模型：每个线程有自己的内存空间，同时这些线程有个共享的主内存，不同线程先更新自身内存再更新主内存，在更新主内存的同一条数据的时候，需要加锁控制。多线程开发中常见锁的关键字有synchr">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis学习总结">
-<meta name="twitter:description" content="最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下
-Redis简介Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一
-Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和第一个">
+<meta name="twitter:title" content="分布式锁及项目中的应用">
+<meta name="twitter:description" content="这篇文章也是我对分布式锁认知的一个总结吧，目前所做的流量工程使用到了基于Redis的分布式锁，由此延伸到其他的概念及应用
+什么是分布式锁提到锁，Java开发者的第一印象肯定会想到Java线程中的锁，基于Java的内存模型：每个线程有自己的内存空间，同时这些线程有个共享的主内存，不同线程先更新自身内存再更新主内存，在更新主内存的同一条数据的时候，需要加锁控制。多线程开发中常见锁的关键字有synchr">
 <meta name="twitter:creator" content="@TheCorbam">
 
     
@@ -86,38 +83,36 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/24/redis学习总结/" title="Redis学习总结" itemprop="url">Redis学习总结</a>
+      <a href="/2017/03/25/分布式锁及项目中的应用/" title="分布式锁及项目中的应用" itemprop="url">分布式锁及项目中的应用</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-24T05:18:14.000Z" itemprop="datePublished"> 发表于 2015-05-24</time>
+    <time datetime="2017-03-25T12:31:29.000Z" itemprop="datePublished"> 发表于 2017-03-25</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
-		
-		</div>
-		
-		<p>最近做流量项目，系统用redis作为缓存，花了几天时间学习了redis的基本内容，整理和总结一下</p>
-<h1 id="Redis简介">Redis简介</h1><p>Redis是一种非关系型数据库（即nosql），存储类型为键值(key-value)，其中value支持多种数据类型，包括string、hash、list、set、zset，估计这也是流量项目使用redis的原因之一</p>
-<h1 id="Redis适用场景">Redis适用场景</h1><p>1、取最新N个数据的操作<br>2、排行榜应用（好像和第一个有点重复）<br>3、需要精确设定过期时间的应用<br>4、计数器的应用（新浪微博主要使用）<br>5、Uniq操作，获取某段时间所有数据排重值<br>6、实时系统，反垃圾系统<br>7、Pub/Sub构建实时消息系统<br>8、构建队列系统<br>9、缓存<br>当前公司使用的就是Redis的第9个应用，其他功能及应用还在学习ing</p>
-<h1 id="Redis安装">Redis安装</h1><hr>
-<p>目前Redis稳定版已经到了3.0，下载地址：<a href="http://redis.io/download" target="_blank" rel="external">http://redis.io/download</a><br>下载后解压并编译<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tar xzf redis-<span class="number">3.0</span>.<span class="number">1</span>.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-<span class="number">3.0</span>.<span class="number">1</span></span><br><span class="line">$ make</span><br></pre></td></tr></table></figure></p>
-<p>现在可以启动redis服务了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-server</span><br></pre></td></tr></table></figure></p>
-<p>然后另开一个窗口<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br></pre></td></tr></table></figure></p>
-<p>显示<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure></p>
-<p>说明已经成功了</p>
-<p>如果不想另开窗口，可将redis.conf中属性”daemonize no”中no改为yes[指后台运行]</p>
-<p>第一个示例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; <span class="built_in">set</span> first <span class="string">"Hello World"</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt; get first</span><br><span class="line"><span class="string">"Hello World"</span></span><br></pre></td></tr></table></figure></p>
-<h1 id="Redis参数配置">Redis参数配置</h1>  
+		<p>这篇文章也是我对分布式锁认知的一个总结吧，目前所做的流量工程使用到了基于Redis的分布式锁，由此延伸到其他的概念及应用</p>
+<h1 id="什么是分布式锁">什么是分布式锁</h1><p>提到锁，Java开发者的第一印象肯定会想到Java线程中的锁，基于Java的内存模型：每个线程有自己的内存空间，同时这些线程有个共享的主内存，不同线程先更新自身内存再更新主内存，在更新主内存的同一条数据的时候，需要加锁控制。多线程开发中常见锁的关键字有synchronized、ReentrantLock等，但多线程锁是存在一个JVM之中的，如果操作的数据不在一个JVM中，多线程中锁就失效了，这种情况下分布式锁就诞生了，即多个Java实例、甚至不一定是Java程序、或多个系统需要操作同一个副本数据的时候，需要一个指挥交通的人指定操作的先后顺序，这就是分布式锁的概念。</p>
+<h1 id="什么场景下需要分布式锁">什么场景下需要分布式锁</h1><p>单纯将分布式锁的概念可能有点抽象，以流量业务场景中例子来说明，手机用户可以在手机App端、网上营业厅、wap手厅进行流量业务的操作，如果发现该用户没有流量账户的时候，会首先给该用户创建一个专门的流量账户，如果用户在app端、网上营业厅端同时操作的时候，可能会给该用户创建2个账户；再举一个例子，一个公共集团账户，下面包含很多账户，给下面账户充值的时候，会对该集团账本进行资金扣减，高并发多请求的时候会到导致并发失败，这时候为了减少失败率，提升QPS/TPS，同样需要分布式锁</p>
+<h1 id="行业内解决方案">行业内解决方案</h1><p>上面说到了扣减同一账本的时候，估计就可以想到，其实这可以用乐观锁悲观锁来实现，确实，广义上来讲，乐观锁悲观锁也是分布式锁，这是一种基于数据库实现的分布式锁，另外还有其他多种方案，比如基于ZooKeeper实现分布式锁、基于Redis实现分布式锁（我们项目中就是使用该方式），下面一个一个分析：</p>
+<ul>
+<li>1、基于数据库悲观锁乐观锁<br>a)悲观锁：每次拿到数据的时候都认为数据是被人改过的或有可能被更改，因为每次都进行加锁，最直接的方式：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table <span class="built_in">where</span> (...) <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>b)乐观锁：每次去拿数据的时候都认为别人不会修改，但是更新的时候会判断有没有其他操作更新了该数据，根据比较版本号（或时间戳）的方式来衡量当前版本是不是最新版本:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select version from table</span><br><span class="line">update table <span class="built_in">set</span> version=version+<span class="number">1</span> <span class="built_in">where</span> version=?</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>2、基于Redis实现<br>Redis版本的实现也是因为不管单机还是集群分布式，都需要从同一个地方获取锁，而单线程的Redis恰巧具备这样的特性，再加上合理的命令，自然可以实现分布式锁的功能。当然，即使使用Redis实现，也有不同的实现逻辑，下面依次介绍：<br>a)set+expire<br>b)setnx+expire<br>c)setnx+get+getset</p>
+</li>
+<li><p>3、基于ZooKeeper实现<br>zookeeper分布式锁是基于zk的临时有序节点的特性实现的，其主要思想为：每个客户端对某个功能加锁时，在zookeeper上的与该功能对应的指定节点的目录下，生成一个唯一的临时有序节点。判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题</p>
+</li>
+</ul>
+<h1 id="总结">总结</h1><p>基本把我对分布式锁的了解大概讲了一遍。可以实现分布式锁功能的，包括数据库、nosql、分布式协调服务等等。根据业务的场景、现状以及已经依赖的服务，应用可以使用不同分布式锁实现。</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -130,7 +125,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Redis/">Redis</a>
+  <span></span> <a href="/tags/分布式/">分布式</a>
   </div>
 
 </div>
@@ -139,7 +134,7 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/24/redis学习总结/" data-title="Redis学习总结 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
+	  <div data-url="http://yoursite.com/2017/03/25/分布式锁及项目中的应用/" data-title="分布式锁及项目中的应用 | ZhangChi&#39;s Blog" data-tsina="2489280091" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -152,19 +147,11 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/06/09/阅读记录（2015年6月9日）/" title="阅读记录-2015年6月9日">
-  <strong>上一篇：</strong><br/>
-  <span>
-  阅读记录-2015年6月9日</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/13/NoSQL思维导图/"  title="NoSQL思维导图">
+<a href="/2016/12/31/2016年工作总结/"  title="2016年工作总结">
  <strong>下一篇：</strong><br/> 
- <span>NoSQL思维导图
+ <span>2016年工作总结
 </span>
 </a>
 </div>
@@ -173,19 +160,12 @@ Redis适用场景1、取最新N个数据的操作2、排行榜应用（好像和
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/05/24/redis学习总结/" data-title="Redis学习总结" data-url="http://yoursite.com/2015/05/24/redis学习总结/"></div>
+	<div class="ds-thread" data-thread-key="2017/03/25/分布式锁及项目中的应用/" data-title="分布式锁及项目中的应用" data-url="http://yoursite.com/2017/03/25/分布式锁及项目中的应用/"></div>
 </section>
 
 
 </div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-  <div id="toc" class="toc-aside">
-  <strong class="toc-title">文章目录</strong>
- 
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis简介"><span class="toc-number">1.</span> <span class="toc-text">Redis简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis适用场景"><span class="toc-number">2.</span> <span class="toc-text">Redis适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis安装"><span class="toc-number">3.</span> <span class="toc-text">Redis安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis参数配置"><span class="toc-number">4.</span> <span class="toc-text">Redis参数配置</span></a></li></ol>
- 
-  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -415,8 +395,6 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
