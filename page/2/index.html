@@ -558,6 +558,142 @@
 
 
 
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/09/20/HashMap各种遍历方式如如何选择/" title="HashMap各种遍历方式如何选择" itemprop="url">HashMap各种遍历方式如何选择</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="ZhangChi" target="_blank" itemprop="author">ZhangChi</a>
+		
+  <p class="article-time">
+    <time datetime="2014-09-20T09:45:28.000Z" itemprop="datePublished"> 发表于 2014-09-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="说明">说明</h3><p>HashMap有很多种遍历方式，网上很多都是建议entrySet，不建议使用其他方式，大部分的理由都是因为entrySet相比keySet而言，一次拿到了所有的key和value的集合，keySet只取到了key的集合，所以对于key而言，还要再去map集合中再查一次value，因此影响了性能，而且Java8中又出现了新的遍历方式，它的性能又如何呢？一起做一次对比测试</p>
+<h3 id="测试逻辑">测试逻辑</h3><p>对于方式，会针对获取key、获取value、同时获取key和value使用不同的比较；<br>对于数据，key存入的是包装类型Integer，value存入的是String<br>测试代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line">public class HashMapLoop &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">1</span>种：最入门的方式，只能遍历value</span><br><span class="line">     */</span><br><span class="line">    public static void <span class="keyword">for</span>Loop(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; map.size(); i++) &#123;</span><br><span class="line">            System.out.print(map.get(i));</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"forLoop cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">2</span>种：使用ketSet，可以遍历key和value</span><br><span class="line">     */</span><br><span class="line">    public static void keySet(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (Integer key : map.keySet()) &#123;</span><br><span class="line">            System.out.print(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"keySet cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">3</span>种：使用entrySet，可以遍历key和value</span><br><span class="line">     */</span><br><span class="line">    public static void entrySet(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">//            entry.getKey();</span><br><span class="line">            System.out.print(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"entrySet cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">4</span>种：使用迭代器遍历KeySet，可以遍历key和value</span><br><span class="line">     */</span><br><span class="line">    public static void iteratorKeySet(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        Iterator&lt;Integer&gt; iterator = map.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Integer key = iterator.next();</span><br><span class="line">            System.out.print(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"iteratorKeySet cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">5</span>种：使用迭代器遍历entrySet，可以遍历key和value</span><br><span class="line">     */</span><br><span class="line">    public static void iteratorEntrySet(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">//            Integer key = entry.getKey();</span><br><span class="line">            System.out.print(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"iteratorEntrySet cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">6</span>种：增强<span class="keyword">for</span>循环，只能遍历value</span><br><span class="line">     */</span><br><span class="line">    public static void values(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (String value : map.values()) &#123;</span><br><span class="line">            System.out.print(value);</span><br><span class="line">        &#125;</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"values cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 第<span class="number">7</span>种：lambda方式遍历，可以遍历key和value</span><br><span class="line">     */</span><br><span class="line">    public static void lambda(Map&lt;Integer, String&gt; map) &#123;</span><br><span class="line">        long startTime = System.currentTimeMillis();</span><br><span class="line">        map.forEach((k, v) -&gt; System.out.print(v));</span><br><span class="line">        long costTime = System.currentTimeMillis() - startTime;</span><br><span class="line">        System.err.println(<span class="string">"lambda foreach cost time="</span> + costTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line"></span><br><span class="line">        Map&lt;Integer, String&gt; map = new HashMap();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">            map.put(Integer.valueOf(i), <span class="string">"hangzhou"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>Loop(map);</span><br><span class="line">        keySet(map);</span><br><span class="line">        entrySet(map);</span><br><span class="line">        iteratorKeySet(map);</span><br><span class="line">        iteratorEntrySet(map);</span><br><span class="line">        values(map);</span><br><span class="line">        lambda(map);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试结果">测试结果</h3><h6 id="遍历key">遍历key</h6><table>
+<thead>
+<tr>
+<th>keySet</th>
+<th>entrySet</th>
+<th>iteratorKeySet</th>
+<th>iteratorEntrySet</th>
+<th>lambda</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>248</td>
+<td>264</td>
+<td>305</td>
+<td>316</td>
+<td>321</td>
+</tr>
+</tbody>
+</table>
+<h6 id="遍历value">遍历value</h6><table>
+<thead>
+<tr>
+<th>forLoop</th>
+<th>values</th>
+<th>keySet</th>
+<th>entrySet</th>
+<th>iteratorKeySet</th>
+<th>iteratorEntrySet</th>
+<th>lambda</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>227</td>
+<td>213</td>
+<td>250</td>
+<td>321</td>
+<td>209</td>
+<td>259</td>
+<td>325</td>
+</tr>
+</tbody>
+</table>
+<h6 id="遍历key和value">遍历key和value</h6><table>
+<thead>
+<tr>
+<th>keySet</th>
+<th>entrySet</th>
+<th>iteratorKeySet</th>
+<th>iteratorEntrySet</th>
+<th>lambda</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>416</td>
+<td>406</td>
+<td>366</td>
+<td>369</td>
+<td>411</td>
+</tr>
+</tbody>
+</table>
+<p>ps：对于lambda forEach，测试数据有点惊讶，作为Java8新特性之一，其性能绝对不会差，我后来专门查询了下，Java官方使用的是更精确的jmh测试，需要进行预热，lambda forEach性能基本和values差不多</p>
+<h3 id="结论">结论</h3><ul>
+<li>只遍历key时，keySet方法更为合适，因为entrySet将无用的value也给取出来了，浪费了性能和空间；  </li>
+<li>只遍历value时，使用vlaues方法和lambda forEach是最佳选择，entrySet会略好于keySet方法；  </li>
+<li>同时遍历key和value时，keySet与entrySet方法的性能差异取决于key的具体情况，如复杂度（复杂对象）、离散度、冲突率等。也就是说，取决于HashMap查找value的开销。entrySet一次性取出所有key和value的操作是有性能开销的，当这个损失小于HashMap查找value的开销时，entrySet的性能优势就会体现出来。当key是最简单的数值字符串时，keySet可能反而会更高效。但总体来说还是推荐使用entrySet。因为当key很简单时，其性能或许会略低于keySet，但却是可控的；而随着key的复杂化，entrySet的优势将会明显体现出来；  </li>
+<li>以上是大概情况做的选择，真实业务处理中，肯定按照实际不同情况进行选择，性能并不是唯一考虑的因素</li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/学海无涯/">学海无涯</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Java集合/">Java集合</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2014/09/20/HashMap各种遍历方式如如何选择/#comments" class="ds-thread-count comments-count-link" data-thread-key="2014/09/20/HashMap各种遍历方式如如何选择/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
@@ -576,9 +712,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>14</sup></a></li>
-		  
-		
+			<li><a href="/categories/学海无涯/" title="学海无涯">学海无涯<sup>15</sup></a></li>
 		  
 		
 		  
@@ -595,11 +729,15 @@
 		<ul class="clearfix">
 		
 			
+				<li><a href="/tags/总结/" title="总结">总结<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/分布式/" title="分布式">分布式<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/总结/" title="总结">总结<sup>2</sup></a></li>
+				<li><a href="/tags/List/" title="List">List<sup>1</sup></a></li>
 			
 		
 			
@@ -623,11 +761,11 @@
 			
 		
 			
-				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+				<li><a href="/tags/阅读/" title="阅读">阅读<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/阅读/" title="阅读">阅读<sup>1</sup></a></li>
+				<li><a href="/tags/github/" title="github">github<sup>1</sup></a></li>
 			
 		
 			
@@ -651,13 +789,11 @@
 			
 		
 			
-				<li><a href="/tags/List/" title="List">List<sup>1</sup></a></li>
+				<li><a href="/tags/Java集合/" title="Java集合">Java集合<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/github/" title="github">github<sup>1</sup></a></li>
-			
-		
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
 			
 		
 		</ul>
